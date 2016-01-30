@@ -14,7 +14,7 @@ void rm_darray(darray_t* arr) {
 
 void append(darray_t* arr, void* elem) {
   if (arr->size == arr->capacity) {
-    arr->capacity *= 2;
+    arr->capacity *= GROWTHFACTOR;
     void* new = realloc(arr->elems, arr->capacity*arr->elem_size);
     if (!new) {//realloc failed
       return;
@@ -27,8 +27,8 @@ void append(darray_t* arr, void* elem) {
 
 void pop(darray_t* arr) {
   --arr->size;
-  if (arr->size / (float) arr->capacity <= 0.25) {
-    arr->capacity = (size_t) arr->capacity * 0.75;
+  if (arr->size / (double) arr->capacity <= SHRINKTHRESHOLD) {
+    arr->capacity *= SHRINKFACTOR;
     if (arr->capacity < 1)
       arr->capacity = 1;
     void* new = realloc(arr->elems, arr->capacity*arr->elem_size);

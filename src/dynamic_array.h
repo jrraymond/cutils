@@ -11,6 +11,10 @@ typedef struct darray_t {
   void* elems;
 } darray_t;
 
+double GROWTHFACTOR = 1.5;
+double SHRINKTHRESHOLD = 0.3;
+double SHRINKFACTOR = 0.75;
+
 void mk_darray(darray_t* arr, size_t sz, size_t elem_sz);
 
 void rm_darray(darray_t* arr);
