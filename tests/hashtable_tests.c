@@ -34,9 +34,9 @@ void test_flags() {
     if (ht_status(flags, i) == ht_active)
       ++n;
   }
-  printf("%d\n", n);
   assert(n == 50);
   free(flags);
+  printf("HASHTABLE STATUS TEST COMPLETE\n");
 }
 
 void test_ops() {
@@ -84,6 +84,7 @@ void test_ops() {
 		assert((!found && checker[i] == -1) || (found && *vp == checker[i]));
 	}
   ht_rm(&ht);
+  printf("HASHTABLE INSERT/LOOKUP/DELETE TEST COMPLETE\n");
 }
 
 void test_resizing() {
@@ -92,7 +93,6 @@ void test_resizing() {
   printf("HASHTABLE: size[%d], capacity[%d]\n", ht.size, ht.capacity);
   for (int i=0; i<100; ++i) {
     ht_insert(&ht, &i, &i);
-    printf("%d,%d|", i, ht.size);
     assert(ht.size == i+1);
   }
   printf("HASHTABLE: size[%d], capacity[%d]\n", ht.size, ht.capacity);
@@ -102,10 +102,11 @@ void test_resizing() {
   }
   printf("HASHTABLE: size[%d], capacity[%d]\n", ht.size, ht.capacity);
   ht_rm(&ht);
+  printf("HASHTABLE RESIZING TEST COMPLETE\n");
 }
 
 int main(int argc, char** argv) {
   test_flags();
-  //test_ops();
-  //test_resizing();
+  test_ops();
+  test_resizing();
 }

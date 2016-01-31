@@ -57,26 +57,23 @@ bool ht_lookup(hashtable_t* htable, void* key, void** value) {
 }
 
 void ht_rehash(hashtable_t* ht, int sz) {
+  int old_c = ht->capacity;
   int* old_flags = ht->flags;
   void* old_keys = ht->keys;
   void* old_vals = ht->values;
-  printf("REHASHING: (%d, %d) => (%d)\n", ht->size, ht->capacity, sz);
 
   ht->flags = calloc(2*ceil((double)sz/sizeof(int)), sizeof(int));
   ht->keys = malloc(sz*ht->key_sz);
   ht->values = malloc(sz*ht->value_sz);
-  printf("REHASHING: ALLOCATED\n");
   ht->size = 0;
   ht->capacity = sz;
-  for (int i=0; i<ht->capacity; ++i) {
+  for (int i=0; i<old_c; ++i) {
     if (ht_status(old_flags, i) == ht_active)
       ht_insert(ht, old_keys+i*ht->key_sz, old_vals+i*ht->value_sz);
   }
-  printf("REHASHING: INSERTED\n");
   free(old_flags);
   free(old_keys);
   free(old_vals);
-  printf("REHASHING: FREED\n");
 }
 
 void ht_insert(hashtable_t* htable, void* key, void* value) {
@@ -93,7 +90,6 @@ void ht_insert(hashtable_t* htable, void* key, void* value) {
   ++htable->size;
   if ((double)htable->capacity*0.67 <= (double) htable->size)
     ht_rehash(htable, htable->capacity*2);
-  //printf("I: %d(%d):%d[%d|%d]\n", ix, k, (htable->flags[ix/sizeof(int)]>>ix%sizeof(int))&1, *(int*)value, *(int*)(htable->values+ix*htable->value_sz));
 }
 
 
@@ -110,7 +106,7 @@ void ht_del(hashtable_t* htable, void* key) {
       --htable->size;
     }
   }
-  if (0.1*(double)htable->capacity <= htable->size)
+  if (htable->capacity > 8 && 0.1*(double)htable->capacity >= htable->size)
     ht_rehash(htable, htable->capacity/2);
 }
 
