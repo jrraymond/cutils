@@ -11,6 +11,19 @@ int hash(void* p) {
 	x = ((x >> 16) ^ x);
 	return x;
 }
+void test_flags() {
+  int* flags = calloc(2, sizeof(int));
+  for (int i=0; i<sizeof(int); ++i)
+    assert(ht_status(flags, i) == ht_empty);
+  for (int i=0; i<sizeof(int); i+=2)
+    ht_setstatus(flags, i, ht_active);
+  for (int i=1; i<sizeof(int); i+=2)
+    ht_setstatus(flags, i, ht_dummy);
+  for (int i=0; i<sizeof(int); i+=2)
+    assert(ht_status(flags, i) == ht_active);
+  for (int i=1; i<sizeof(int); i+=2)
+    assert(ht_status(flags, i) == ht_dummy);
+}
 void test() {
 	size_t sz = 100;
 	int* checker = malloc(sz*sizeof(int));
@@ -60,5 +73,6 @@ void test() {
 }
 
 int main(int argc, char** argv) {
+  //test_flags();
   test();
 }
