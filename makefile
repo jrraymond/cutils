@@ -2,7 +2,7 @@ IDIR=.
 BUILD=build
 CC=clang
 CFLAGS=-I$(IDIR) -Wall -std=c99 -g -DDEBUG=1 -Wno-missing-braces
-OUTPUT=cutils.a
+OUTPUT=libcutils.a
 .PHONY: all
 	all: $(OUTPUT)
 
