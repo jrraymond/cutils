@@ -30,7 +30,7 @@ void da_append(struct DynArray *arr, void *elem) {
   if (arr->size == arr->capacity) {
     arr->capacity *= DA_GROWTH_FACTOR;
     void *new = realloc(arr->elems, arr->capacity*arr->elem_size);
-    if (!new) {//realloc failed
+    if (!new) {
       return;
     }
     arr->elems = new;

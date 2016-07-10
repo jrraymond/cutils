@@ -18,10 +18,10 @@ struct DynArray {
 };
 
 /* arr : ptr to uninitialized dynamic array struct
- * sz : initial capacity
+ * capacity : initial capacity (> 0)
  * elem_sz : size of element to be held in array in bytes
  */
-void da_DynArray_init(struct DynArray *arr, size_t sz, size_t elem_sz);
+void da_DynArray_init(struct DynArray *arr, size_t capacity, size_t elem_sz);
 
 /* arr : ptr to initialized dynamic array struct
  * frees memory held by arr
