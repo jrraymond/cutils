@@ -1,17 +1,10 @@
 #include "unordered_set.h"
+#include "hash_functions.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <assert.h>
 
-uint32_t uint32_hash(uint32_t a) {
-    a = (a ^ 61) ^ (a >> 16);
-    a = a + (a << 3);
-    a = a ^ (a >> 4);
-    a = a * 0x27d4eb2d;
-    a = a ^ (a >> 15);
-    return a;
-}
 
 bool uint32_eq(uint32_t a, uint32_t b) {
   return a == b;
