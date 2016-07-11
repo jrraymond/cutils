@@ -18,7 +18,7 @@
 #define US_FLAG_EMP 0
 #define US_FLAG_OCC 1
 #define US_FLAG_DEL 2
-#define __us_flag_clear(flag, i) (flag & ~(3*(2<<(2*i))))
+#define __us_flag_clear(flag, i) (flag & ~(3<<(2*i)))
 #define __us_flag_get(flag, i) ((flag >> (2*i))&3)
 #define __us_flag_index(i) (i/sizeof(uint8_t))
 #define __us_flag_offset(i) (i%sizeof(uint8_t))
@@ -89,7 +89,7 @@
       if (bucket_status == US_FLAG_OCC) { \
         j = (5 * j + 1) % set->capacity; \
       } else { \
-        __us_set_occ(set->flags[jx], offset); \
+        set->flags[jx] = __us_set_occ(set->flags[jx], offset); \
         set->elems[j] = elem; \
         set->hashes[j] = hsh; \
         ++set->size; \
@@ -104,6 +104,7 @@
       size_t jx = __us_flag_index(j); \
       size_t offset = __us_flag_offset(j); \
       uint8_t bucket_status = __us_flag_get(set->flags[jx], offset); \
+      printf("%d\n", bucket_status); \
       switch (bucket_status) { \
         case US_FLAG_EMP: \
           return set->capacity; \
@@ -111,8 +112,10 @@
           if (set->hashes[j] == hsh && _eq_f(set->elems[j], elem)) { \
             return j; \
           } \
+          printf("\nO:%zd\n,", j); \
         case US_FLAG_DEL: \
           j = (5 * j + 1) % set->capacity; \
+          printf("\nD:%zd\n,", j); \
       } \
     } \
   } \
@@ -126,10 +129,37 @@
     } \
     size_t ix = __us_flag_index(i); \
     size_t offset = __us_flag_offset(i); \
-    __us_set_emp(set->flags[ix], offset); \
+    set->flags[ix] = __us_set_emp(set->flags[ix], offset); \
     --set->size; \
     return true; \
-  }
+  } \
+  void _us_##name##_debug_print(us_##name##_t *set, void (*print_hash)(hash_t), void (*print_elem)(elem_t)) { \
+    for (int i=0; i<set->capacity; ++i) { \
+      size_t ix = __us_flag_index(i); \
+      size_t offset = __us_flag_offset(i); \
+      uint8_t buffer_status = __us_flag_get(set->flags[ix], offset); \
+      char *flag; \
+      switch (buffer_status) { \
+        case US_FLAG_EMP: \
+          flag = "emp"; \
+          break; \
+        case US_FLAG_DEL: \
+          flag = "del"; \
+          break; \
+        case US_FLAG_OCC: \
+          flag = "occ"; \
+          break; \
+      } \
+      printf("%d: %s | ", i, flag); \
+      if (buffer_status != US_FLAG_EMP) { \
+        print_hash(set->hashes[i]); \
+        printf(" | "); \
+        print_elem(set->elems[i]); \
+      } \
+      printf("\n"); \
+    } \
+  } \
+
 
 
 

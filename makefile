@@ -15,9 +15,9 @@ $(OUTPUT): dynamic_array.o hashtable.o
 	ranlib $@
 
 test: unordered_set.h
-	$(CC) test_unordered_set.c $(CFLAGS)
+	$(CC) test_unordered_set.c -o test_unordered_set.out $(CFLAGS)
 
 
 .PHONY: clean
 clean:
-	rm -f *.o *.a
+	rm -f *.o *.a *.out
