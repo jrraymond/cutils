@@ -10,11 +10,11 @@ uint32_t uint32_hash(uint32_t a) {
     return a;
 }
 
-int uint32_eq(int a, int b) {
+uint32_t uint32_eq(uint32_t a, uint32_t b) {
   return a < b ? -1 : a > b;
 }
 
-UNORDERED_SET_INIT(uint32, static, uint32_t, &uint32_hash, &uint32_eq)
+UNORDERED_SET_INIT(uint32, static, uint32_t, uint32_t, uint32_hash, uint32_eq)
 
 int main(int argc, char** argv) {
   return EXIT_SUCCESS;
