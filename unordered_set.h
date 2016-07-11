@@ -41,7 +41,7 @@
   scope inline void us_##name##_init(us_##name##_t *set, size_t capacity) {  \
     set->capacity = capacity; \
     set->size = 0; \
-    set->flags = malloc(capacity / sizeof(uint8_t)); \
+    set->flags = calloc(capacity / sizeof(uint8_t), sizeof(uint8_t)); \
     set->hashes = malloc(capacity * sizeof(hash_t)); \
     set->elems = malloc(capacity * sizeof(elem_t)); \
   } \
@@ -52,21 +52,22 @@
     free(set->elems); \
   } \
   scope inline void us_##name##_insert(us_##name##_t *set, elem_t elem) ; \
+ \
   scope inline void us_##name##_rehash(us_##name##_t *set, size_t capacity) { \
     uint8_t *old_flags = set->flags; \
     hash_t *old_hashes = set->hashes; \
     elem_t *old_elems = set->elems; \
-    size_t old_size = set->size; \
+    size_t old_cap = set->capacity; \
     \
-    set->flags = malloc(capacity / sizeof(uint8_t)); \
+    set->flags = calloc(capacity / sizeof(uint8_t), sizeof(uint8_t)); \
     set->hashes = malloc(capacity * sizeof(hash_t)); \
     set->elems = malloc(capacity * sizeof(elem_t)); \
     set->capacity = capacity; \
     \
-    for (int i=0; i<old_size; ++i) { \
+    for (int i=0; i<old_cap; ++i) { \
       size_t ix = __us_flag_index(i); \
       size_t offset = __us_flag_offset(i); \
-      uint8_t bucket_status = __us_flag_get(set->flags[ix], offset); \
+      uint8_t bucket_status = __us_flag_get(old_flags[ix], offset); \
       if (bucket_status == US_FLAG_OCC) { \
         us_##name##_insert(set, old_elems[i]); \
       } \
@@ -146,6 +147,8 @@
         case US_FLAG_OCC: \
           flag = "occ"; \
           break; \
+        default: \
+          flag = "WTF"; \
       } \
       printf("%d: %s | ", i, flag); \
       if (buffer_status != US_FLAG_EMP) { \

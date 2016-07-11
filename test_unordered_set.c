@@ -24,14 +24,15 @@ void uint32_print(uint32_t h) {
 UNORDERED_SET_INIT(uint32, static, uint32_t, uint32_t, uint32_hash, uint32_eq)
 
 void test_unordered_set() {
-  const int s = 64;
+  const int s = 1024;
   us_uint32_t set;
-  us_uint32_init(&set, 32);
+  us_uint32_init(&set, 8);
 
   printf("INSERT\n");
 
-  for (int i=0; i<s/2; ++i)
+  for (int i=0; i<s/2; ++i) {
     us_uint32_insert(&set, i);
+  }
   
   _us_uint32_debug_print(&set, &uint32_print, &uint32_print);
 
