@@ -24,7 +24,7 @@ void uint32_print(uint32_t h) {
 UNORDERED_SET_INIT(uint32, static, uint32_t, uint32_t, uint32_hash, uint32_eq)
 
 void test_unordered_set() {
-  const int s = 8;
+  const int s = 64;
   us_uint32_t set;
   us_uint32_init(&set, 32);
 
@@ -35,7 +35,6 @@ void test_unordered_set() {
   
   _us_uint32_debug_print(&set, &uint32_print, &uint32_print);
 
-  //infinite looping on contains, stuck at index 28 with 32 capacity
   for (int i=0; i<s/2; ++i) {
     printf("%d,", i);
     assert(us_uint32_contains(&set, i));
@@ -63,17 +62,7 @@ void test_unordered_set() {
 }
 
 int main(int argc, char** argv) {
-  //test_unordered_set();
-  uint8_t flag = ~0;
-  printf("%zd\n", flag);
-  flag = __us_set_emp(flag, 0);
-  printf("%zd\n", flag);
-  flag = __us_set_emp(flag, 1);
-  printf("%zd\n", flag);
-  flag = __us_set_emp(flag, 2);
-  printf("%zd\n", flag);
-  flag = __us_set_emp(flag, 3);
-  printf("%zd\n", flag);
+  test_unordered_set();
 
 
   return EXIT_SUCCESS;

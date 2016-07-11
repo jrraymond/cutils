@@ -1,6 +1,6 @@
 IDIR=.
 BUILD=build
-CC=clang
+CC=gcc
 CFLAGS=-I$(IDIR) -Wall -std=c99 -g -DDEBUG=1 -Wno-missing-braces
 OUTPUT=libcutils.a
 

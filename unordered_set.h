@@ -104,7 +104,6 @@
       size_t jx = __us_flag_index(j); \
       size_t offset = __us_flag_offset(j); \
       uint8_t bucket_status = __us_flag_get(set->flags[jx], offset); \
-      printf("%d\n", bucket_status); \
       switch (bucket_status) { \
         case US_FLAG_EMP: \
           return set->capacity; \
@@ -112,10 +111,8 @@
           if (set->hashes[j] == hsh && _eq_f(set->elems[j], elem)) { \
             return j; \
           } \
-          printf("\nO:%zd\n,", j); \
         case US_FLAG_DEL: \
           j = (5 * j + 1) % set->capacity; \
-          printf("\nD:%zd\n,", j); \
       } \
     } \
   } \
@@ -129,7 +126,7 @@
     } \
     size_t ix = __us_flag_index(i); \
     size_t offset = __us_flag_offset(i); \
-    set->flags[ix] = __us_set_emp(set->flags[ix], offset); \
+    set->flags[ix] = __us_set_del(set->flags[ix], offset); \
     --set->size; \
     return true; \
   } \
