@@ -14,11 +14,11 @@ double DA_SHRINK_THRESHOLD = 0.3;
 double DA_SHRINK_FACTOR = 0.75;
 
 
-void da_DynArray_init(struct DynArray *arr, size_t sz, size_t elem_sz) {
+void da_DynArray_init(struct DynArray *arr, size_t capacity, size_t elem_sz) {
   arr->size = 0;
-  arr->capacity = sz;
+  arr->capacity = capacity;
   arr->elem_size = elem_sz;
-  arr->elems = malloc(sz*elem_sz);
+  arr->elems = malloc(capacity*elem_sz);
 }
 
 
@@ -26,6 +26,7 @@ void da_DynArray_del(struct DynArray *arr) {
   free(arr->elems);
 }
 
+/* FIXME BUG WHEN RESIZING AFTER INIT CAPACITY 0 */
 void da_append(struct DynArray *arr, void *elem) {
   if (arr->size == arr->capacity) {
     arr->capacity *= DA_GROWTH_FACTOR;
