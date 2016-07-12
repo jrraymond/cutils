@@ -199,8 +199,7 @@
       size_t offset = __us_flag_offset(last); \
       uint8_t f = __us_flag_get(set->flags[ix], offset); \
       if (f == US_FLAG_OCC) {\
-        *itr = last; \
-        return; \
+        break; \
       } \
       ++last; \
     } \
@@ -209,17 +208,17 @@
   } \
   \
   scope void us_##name##_prev(us_##name##_t *set, size_t *itr) { \
-    size_t last = *itr - 1; \
-    while (last >= 0) { \
+    size_t last = *itr; \
+    while (last > 0) { \
+      --last; \
       size_t ix = __us_flag_index(last); \
       size_t offset = __us_flag_offset(last); \
       uint8_t f = __us_flag_get(set->flags[ix], offset); \
       if (f == US_FLAG_OCC) {\
-        *itr = last; \
-        return; \
+        break; \
       } \
-      --last; \
-    } \
+    }\
+    *itr = last; \
     return; \
   } \
 
