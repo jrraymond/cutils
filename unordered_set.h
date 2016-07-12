@@ -29,7 +29,9 @@
 #define __us_set_occ(flag, i) (__us_flag_clear(flag, i) | (US_FLAG_OCC << (2*i)))
 #define __us_set_del(flag, i) (__us_flag_clear(flag, i) | (US_FLAG_DEL << (2*i)))
 
-#define UNORDERED_SET_INIT(name, scope, elem_t, hash_t, _hash_f, _eq_f)            \
+
+
+#define UNORDERED_SET_TYPE(name, elem_t, hash_t) \
   typedef struct {                                                         \
     size_t capacity;                                                       \
     size_t size;                                                           \
@@ -37,8 +39,24 @@
     hash_t *hashes;                                                        \
     elem_t *elems;                                                         \
   } us_##name##_t ;                                                        \
+
+
+
+#define UNORDERED_SET_SPEC(name, scope, elem_t, hash_t)            \
+  scope void us_##name##_init(us_##name##_t *set, size_t capacity);  \
+  scope void us_##name##_del(us_##name##_t *set); \
+  scope void us_##name##_rehash(us_##name##_t *set, size_t capacity); \
+  scope void us_##name##_insert(us_##name##_t *set, elem_t elem); \
+  scope size_t us_##name##_find(us_##name##_t *set, elem_t elem) ; \
+  scope bool us_##name##_contains(us_##name##_t *set, elem_t elem) ; \
+  scope bool us_##name##_remove(us_##name##_t *set, elem_t elem) ; \
+  scope void _us_##name##_debug_print(us_##name##_t *set, void (*print_hash)(hash_t), void (*print_elem)(elem_t)) ; \
+
+
+
+#define UNORDERED_SET_IMPL(name, scope, elem_t, hash_t, _hash_f, _eq_f)            \
                                                                            \
-  scope inline void us_##name##_init(us_##name##_t *set, size_t capacity) {  \
+  scope void us_##name##_init(us_##name##_t *set, size_t capacity) {  \
     set->capacity = capacity; \
     set->size = 0; \
     set->flags = calloc(capacity / sizeof(uint8_t), sizeof(uint8_t)); \
@@ -46,14 +64,14 @@
     set->elems = malloc(capacity * sizeof(elem_t)); \
   } \
     \
-  scope inline void us_##name##_del(us_##name##_t *set) { \
+  scope void us_##name##_del(us_##name##_t *set) { \
     free(set->flags); \
     free(set->hashes); \
     free(set->elems); \
   } \
-  scope inline void us_##name##_insert(us_##name##_t *set, elem_t elem) ; \
  \
-  scope inline void us_##name##_rehash(us_##name##_t *set, size_t capacity) { \
+  scope void us_##name##_insert(us_##name##_t *set, elem_t elem); \
+  scope void us_##name##_rehash(us_##name##_t *set, size_t capacity) { \
     uint8_t *old_flags = set->flags; \
     hash_t *old_hashes = set->hashes; \
     elem_t *old_elems = set->elems; \
@@ -77,7 +95,7 @@
     free(old_hashes); \
     free(old_elems); \
   } \
-  scope inline void us_##name##_insert(us_##name##_t *set, elem_t elem) { \
+  scope void us_##name##_insert(us_##name##_t *set, elem_t elem) { \
     if (set->capacity * US_LOAD_FACTOR < set->size) { \
       us_##name##_rehash(set, set->capacity << 1); \
     } \
@@ -98,7 +116,7 @@
       } \
     } \
   } \
-  scope inline size_t us_##name##_find(us_##name##_t *set, elem_t elem) { \
+  scope size_t us_##name##_find(us_##name##_t *set, elem_t elem) { \
     hash_t hsh = _hash_f(elem); \
     size_t j = hsh % set->capacity; \
     for(;;) { \
@@ -117,10 +135,10 @@
       } \
     } \
   } \
-  scope inline bool us_##name##_contains(us_##name##_t *set, elem_t elem) { \
+  scope bool us_##name##_contains(us_##name##_t *set, elem_t elem) { \
     return us_##name##_find(set, elem) != set->capacity; \
   } \
-  scope inline bool us_##name##_remove(us_##name##_t *set, elem_t elem) { \
+  scope bool us_##name##_remove(us_##name##_t *set, elem_t elem) { \
     size_t i = us_##name##_find(set, elem); \
     if (i == set->capacity) { \
       return false; \
@@ -131,7 +149,7 @@
     --set->size; \
     return true; \
   } \
-  void _us_##name##_debug_print(us_##name##_t *set, void (*print_hash)(hash_t), void (*print_elem)(elem_t)) { \
+  scope void _us_##name##_debug_print(us_##name##_t *set, void (*print_hash)(hash_t), void (*print_elem)(elem_t)) { \
     for (int i=0; i<set->capacity; ++i) { \
       size_t ix = __us_flag_index(i); \
       size_t offset = __us_flag_offset(i); \
@@ -161,6 +179,10 @@
   } \
 
 
+
+#define UNORDERED_SET_DECLARE(name, scope, elem_t, hash_t) \
+  UNORDERED_SET_TYPE(name, elem_t, hash_t) \
+  UNORDERED_SET_SPEC(name, scope, elem_t, hash_t)
 
 
 

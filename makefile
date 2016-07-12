@@ -10,7 +10,7 @@ OUTPUT=libcutils.a
 .c.o: 
 	$(CC) -c $(CFLAGS) $<
 
-$(OUTPUT): dynamic_array.o hashtable.o
+$(OUTPUT): dynamic_array.o hashtable.o hash_functions.o
 	ar ru $@ $^
 	ranlib $@
 
