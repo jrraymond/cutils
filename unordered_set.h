@@ -51,6 +51,10 @@
   scope bool us_##name##_contains(us_##name##_t *set, elem_t elem) ; \
   scope bool us_##name##_remove(us_##name##_t *set, elem_t elem) ; \
   scope void _us_##name##_debug_print(us_##name##_t *set, void (*print_hash)(hash_t), void (*print_elem)(elem_t)) ; \
+  scope size_t us_##name##_begin(us_##name##_t *set);\
+  scope size_t us_##name##_end(us_##name##_t *set); \
+  scope void us_##name##_next(us_##name##_t *set, size_t *itr); \
+  scope void us_##name##_prev(us_##name##_t *set, size_t *itr);
 
 
 
@@ -177,6 +181,47 @@
       printf("\n"); \
     } \
   } \
+  \
+  scope size_t us_##name##_begin(us_##name##_t *set) {\
+    return 0; \
+  } \
+  \
+  scope size_t us_##name##_end(us_##name##_t *set) { \
+    size_t last = set->capacity - 1; \
+    us_##name##_prev(set, &last); \
+    return last; \
+  } \
+  \
+  scope void us_##name##_next(us_##name##_t *set, size_t *itr) {\
+    size_t last = *itr + 1; \
+    while (last < set->capacity) { \
+      size_t ix = __us_flag_index(last); \
+      size_t offset = __us_flag_offset(last); \
+      uint8_t f = __us_flag_get(set->flags[ix], offset); \
+      if (f == US_FLAG_OCC) {\
+        *itr = last; \
+        return; \
+      } \
+      ++last; \
+    } \
+    return; \
+  } \
+  \
+  scope void us_##name##_prev(us_##name##_t *set, size_t *itr) { \
+    size_t last = *itr - 1; \
+    while (last > 0) { \
+      size_t ix = __us_flag_index(last); \
+      size_t offset = __us_flag_offset(last); \
+      uint8_t f = __us_flag_get(set->flags[ix], offset); \
+      if (f == US_FLAG_OCC) {\
+        *itr = last; \
+        return; \
+      } \
+      --last; \
+    } \
+    return; \
+  } \
+
 
 
 
