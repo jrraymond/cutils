@@ -1,5 +1,6 @@
 #include "dynamic_array.h"
 
+#include <math.h>
 
 /*  DA_GROWTH_FACTOR determines how much big the resized
  *  array should be relative to the old array.
@@ -18,7 +19,11 @@ void da_DynArray_init(struct DynArray *arr, size_t capacity, size_t elem_sz) {
   arr->size = 0;
   arr->capacity = capacity;
   arr->elem_size = elem_sz;
-  arr->elems = malloc(capacity*elem_sz);
+  if (capacity) {
+    arr->elems = malloc(capacity*elem_sz);
+  } else {
+    arr->elems = NULL;
+  }
 }
 
 
@@ -26,10 +31,9 @@ void da_DynArray_del(struct DynArray *arr) {
   free(arr->elems);
 }
 
-/* FIXME BUG WHEN RESIZING AFTER INIT CAPACITY 0 */
 void da_append(struct DynArray *arr, void *elem) {
   if (arr->size == arr->capacity) {
-    arr->capacity *= DA_GROWTH_FACTOR;
+    arr->capacity = arr->capacity ? ceil(arr->capacity * DA_GROWTH_FACTOR) : 1;
     void *new = realloc(arr->elems, arr->capacity*arr->elem_size);
     if (!new) {
       return;

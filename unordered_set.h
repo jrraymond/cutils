@@ -187,7 +187,7 @@
   } \
   \
   scope size_t us_##name##_end(us_##name##_t *set) { \
-    size_t last = set->capacity - 1; \
+    size_t last = set->capacity; \
     us_##name##_prev(set, &last); \
     return last; \
   } \
@@ -204,12 +204,13 @@
       } \
       ++last; \
     } \
+    *itr = last; \
     return; \
   } \
   \
   scope void us_##name##_prev(us_##name##_t *set, size_t *itr) { \
     size_t last = *itr - 1; \
-    while (last > 0) { \
+    while (last >= 0) { \
       size_t ix = __us_flag_index(last); \
       size_t offset = __us_flag_offset(last); \
       uint8_t f = __us_flag_get(set->flags[ix], offset); \

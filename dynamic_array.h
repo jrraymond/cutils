@@ -18,7 +18,7 @@ struct DynArray {
 };
 
 /* arr : ptr to uninitialized dynamic array struct
- * capacity : initial capacity (> 0)
+ * capacity : initial capacity (if 0 then no allocation)
  * elem_sz : size of element to be held in array in bytes
  */
 void da_DynArray_init(struct DynArray *arr, size_t capacity, size_t elem_sz);
