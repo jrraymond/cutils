@@ -29,6 +29,12 @@ void da_DynArray_init(struct DynArray *arr, size_t capacity, size_t elem_sz);
  */
 void da_DynArray_del(struct DynArray *arr);
 
+/* to: uninitialized dynamic array to copy into
+ * from : dynamic array to copy from
+ * this is a SHALLOW copy
+ */
+void da_DynArray_copy(struct DynArray *to, struct DynArray *from);
+
 /* arr : ptr to dynamic array struct
  * elem : ptr to elem to append
  * _copys_ elem to the end of the array

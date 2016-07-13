@@ -31,6 +31,16 @@ void da_DynArray_del(struct DynArray *arr) {
   free(arr->elems);
 }
 
+void da_DynArray_copy(struct DynArray *to, struct DynArray *from) {
+  to->capacity = from->capacity;
+  to->elem_size = from->elem_size;
+  to->elems = malloc(to->capacity * to->elem_size);
+  memcpy(to->elems, from->elems, to->capacity * to->elem_size);
+  to->size = from->size;
+}
+
+
+
 void da_append(struct DynArray *arr, void *elem) {
   if (arr->size == arr->capacity) {
     arr->capacity = arr->capacity ? ceil(arr->capacity * DA_GROWTH_FACTOR) : 1;

@@ -183,27 +183,28 @@
   } \
   \
   scope size_t us_##name##_begin(us_##name##_t *set) {\
-    return 0; \
+    size_t last = -1; \
+    us_##name##_next(set, &last); \
+    return last; \
   } \
   \
   scope size_t us_##name##_end(us_##name##_t *set) { \
     size_t last = set->capacity; \
-    us_##name##_prev(set, &last); \
     return last; \
   } \
   \
   scope void us_##name##_next(us_##name##_t *set, size_t *itr) {\
-    size_t last = *itr + 1; \
-    while (last < set->capacity) { \
-      size_t ix = __us_flag_index(last); \
-      size_t offset = __us_flag_offset(last); \
+    size_t next = *itr+1; \
+    while (next < set->capacity) { \
+      size_t ix = __us_flag_index(next); \
+      size_t offset = __us_flag_offset(next); \
       uint8_t f = __us_flag_get(set->flags[ix], offset); \
       if (f == US_FLAG_OCC) {\
         break; \
       } \
-      ++last; \
+      ++next; \
     } \
-    *itr = last; \
+    *itr = next; \
     return; \
   } \
   \
