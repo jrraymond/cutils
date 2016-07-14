@@ -10,10 +10,11 @@ static inline int ba_offset(size_t i) {
   return i % sizeof(int);
 }
 
+
 void ba_init(struct BitArray *ba, size_t capacity) {
   ba->size = capacity;
   size_t bytes = ceil(capacity / (8.0 * (double) sizeof(int)));
-  ba->bits = malloc(bytes);
+  ba->bits = calloc(bytes, sizeof(char));
 }
 
 void ba_del(struct BitArray *ba) {
@@ -23,8 +24,9 @@ void ba_del(struct BitArray *ba) {
 void ba_resize(struct BitArray *ba, size_t new_capacity) {
   int* old = ba->bits;
   size_t bytes = ceil(new_capacity / (8.0 * (double) sizeof(int)));
-  ba->bits = malloc(bytes);
-  for (size_t i=0; i<ba->size; ++i) {
+  ba->bits = calloc(bytes, sizeof(char));
+  size_t bound = ba->size <= new_capacity ? ba->size : new_capacity;
+  for (size_t i=0; i<bound; ++i) {
     size_t slot = ba_slot(i);
     size_t offset = ba_offset(i);
     bool b = (old[slot] >> offset)&1;
