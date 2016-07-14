@@ -44,10 +44,11 @@ void test_graph() {
     for (uint8_t j=0; j<2; ++j) {
       uint8_t u = nodes[i];
       uint8_t v = nodes[j];
-      char ed = (char) u*v;
+      char ed = 'a' + (char) 4*i + j;
       uint8_t edge_index = dg_u8_add_edge(&g, u, v, ed);
       edges[4*i+j] = edge_index;
       edge_data[edge_index] = ed;
+      printf("\t%u: %u->%c\n", 4*i+j, edge_index, ed);
     }
   }
   assert(g.num_edges == 8);
@@ -58,9 +59,11 @@ void test_graph() {
     for (uint8_t j=2; j<4; ++j) {
       uint8_t u = nodes[i];
       uint8_t v = nodes[j];
-      uint8_t edge_index = dg_u8_add_edge(&g, u, v, (char) u*v);
-      edges[i+j] = edge_index;
-      edge_data[edge_index] = (char) u*v;
+      char ed = 'A' + (char) 4*i + j;
+      uint8_t edge_index = dg_u8_add_edge(&g, u, v, ed);
+      edges[4*i+j] = edge_index;
+      edge_data[edge_index] = ed;
+      printf("\t%u: %u->%c\n", 4*i+j, edge_index, ed);
     }
   }
   assert(g.num_edges == 16);
@@ -93,7 +96,8 @@ void test_graph() {
   for (uint8_t i=0; i<16; ++i) {
     char ed;
     dg_u8_get_edge(&g, edges[i], &ed);
-    assert(ed == edge_data[i]);
+    printf("\t%u: %u->%c|%c\n", i, edges[i], ed, edge_data[edges[i]]);
+    assert(ed == edge_data[edges[i]]);
   }
 
   /* test del node */

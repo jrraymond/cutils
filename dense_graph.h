@@ -115,10 +115,12 @@
       ++g->next_edge_index; \
     } \
     \
+    struct _EdgeData_##name##_t full_ed = {.u = u, .v = v, .data = ed }; \
+    \
     if (next_index >= g->edge_data.size) { \
-      da_append(&g->edge_data, (void*) &ed); \
+      da_append(&g->edge_data, (void*) &full_ed); \
     } else { \
-      da_set(&g->edge_data, next_index, (void*) &ed); \
+      da_set(&g->edge_data, next_index, (void*) &full_ed); \
     } \
     ++g->num_edges; \
     return next_index; \
@@ -161,11 +163,15 @@
   } \
   \
   void dg_##name##_get_edge(struct DenseGraph_##name##_t *g, index_t edge, edge_data_t *ed) { \
-    da_get(&g->edge_data, edge, (void*) ed); \
+    struct _EdgeData_##name##_t *full_ed; \
+    da_get_ref(&g->edge_data, edge, (void**) &full_ed); \
+    *ed = full_ed->data; \
   } \
   \
   void dg_##name##_get_edge_ref(struct DenseGraph_##name##_t *g, index_t edge, edge_data_t **ed) { \
-    da_get_ref(&g->edge_data, edge, (void**) ed); \
+    struct _EdgeData_##name##_t *full_ed; \
+    da_get_ref(&g->edge_data, edge, (void**) &full_ed); \
+    *ed = &full_ed->data; \
   } \
   \
   void _dg_##name##_print(struct DenseGraph_##name##_t *g, void (*print_node_data)(node_data_t nd), void (*print_edge_data)(edge_data_t ed), void (*print_index_t)(index_t i)) { \
@@ -175,6 +181,15 @@
       node_data_t nd; \
       da_get(&g->node_data, i, (void*) &nd); \
       print_node_data(nd); \
+      printf(","); \
+    } \
+    printf("\n"); \
+    printf("Edge data:\n"); \
+    for (size_t i=0; i<g->edge_data.size; ++i) { \
+      printf("%zu->", i); \
+      struct _EdgeData_##name##_t *ed; \
+      da_get_ref(&g->edge_data, i, (void**) &ed); \
+      print_edge_data(ed->data); \
       printf(","); \
     } \
     printf("\n"); \
