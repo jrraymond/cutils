@@ -8,6 +8,14 @@
 
 DENSE_GRAPH_INIT(u8, uint8_t, char, char)
 
+void print_u8(uint8_t i) {
+  printf("%u", i);
+}
+
+void print_char(char c) {
+  printf("%c", c); 
+}
+
 
 void test_graph() {
   struct DenseGraph_u8_t g;
@@ -17,13 +25,16 @@ void test_graph() {
   uint8_t nodes[8] = {0};
   char node_data[8];
 
-  printf("Adding 4 nodes\n");
+  printf("Adding 4 nodes:\n");
   for (uint8_t i=0; i<4; ++i) {
     char nd = (char) ((uint8_t) 'a' + i);
-    node_data[i] = nd;
-    nodes[i] = dg_u8_add_node(&g, nd);
+    uint8_t node_index = dg_u8_add_node(&g, nd);
+    nodes[i] = node_index;
+    node_data[nodes[i]] = nd;
+    printf("\t%u: %u->%c\n", i, node_index, nd);
   }
   assert(g.num_nodes == 4);
+
 
   /* then we add 8 edges */
   uint8_t edges[16] = {0};
@@ -34,8 +45,9 @@ void test_graph() {
       uint8_t u = nodes[i];
       uint8_t v = nodes[j];
       char ed = (char) u*v;
-      edges[4*i+j] = dg_u8_add_edge(&g, u, v, ed);
-      edge_data[4*i+j] = ed;
+      uint8_t edge_index = dg_u8_add_edge(&g, u, v, ed);
+      edges[4*i+j] = edge_index;
+      edge_data[edge_index] = ed;
     }
   }
   assert(g.num_edges == 8);
@@ -46,26 +58,34 @@ void test_graph() {
     for (uint8_t j=2; j<4; ++j) {
       uint8_t u = nodes[i];
       uint8_t v = nodes[j];
-      edges[i+j] = dg_u8_add_edge(&g, u, v, (char) u*v);
+      uint8_t edge_index = dg_u8_add_edge(&g, u, v, (char) u*v);
+      edges[i+j] = edge_index;
+      edge_data[edge_index] = (char) u*v;
     }
   }
   assert(g.num_edges == 16);
 
   /* then we add more nodes to force graph matrix to grow */
-  printf("Adding 4 more nodes\n");
+  printf("Adding 4 more nodes:\n");
   for (uint8_t i=4; i<8; ++i) {
     char nd = (char) ((uint8_t) 'a' + i);
-    node_data[i] = nd;
-    nodes[i] = dg_u8_add_node(&g, nd);
+    uint8_t node_index = dg_u8_add_node(&g, nd);
+    node_data[node_index] = nd;
+    nodes[i] = node_index;
+    printf("\t%u: %u->%c\n", i, node_index, nd);
   }
+  printf("\n");
   assert(g.num_nodes == 8);
+
+  _dg_u8_print(&g, &print_char, &print_char, &print_u8);
 
   /* then we test get node */
   printf("testing get_node\n");
   for (uint8_t i=0; i<8; ++i) {
     char nd;
     dg_u8_get_node(&g, nodes[i], &nd);
-    assert(nd == node_data[i]);
+    printf("\t%u: %u->%c|%c\n", i, nodes[i], nd, node_data[nodes[i]]);
+    assert(nd == node_data[nodes[i]]);
   }
 
   /* then we test get edge */
