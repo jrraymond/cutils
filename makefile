@@ -20,6 +20,9 @@ test_unordered_set: unordered_set.h
 test_matrix: matrix.h
 	$(CC) test_matrix.c -o test_matrix.out $(CFLAGS)
 
+test_dense_graph: dense_graph.h dynamic_array.o
+	$(CC) test_dense_graph.c -o test_dense_graph.out $(CFLAGS) dynamic_array.o
+
 .PHONY: tests
 tests: 
 	$(MAKE) test_unordered_set
