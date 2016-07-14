@@ -14,9 +14,16 @@ $(OUTPUT): dynamic_array.o hashtable.o hash_functions.o
 	ar ru $@ $^
 	ranlib $@
 
-test: unordered_set.h
+test_unordered_set: unordered_set.h
 	$(CC) test_unordered_set.c -o test_unordered_set.out $(CFLAGS)
 
+test_matrix: matrix.h
+	$(CC) test_matrix.c -o test_matrix.out $(CFLAGS)
+
+.PHONY: tests
+tests: 
+	$(MAKE) test_unordered_set
+	$(MAKE) test_matrix
 
 .PHONY: clean
 clean:

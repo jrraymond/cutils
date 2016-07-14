@@ -10,28 +10,28 @@
     size_t cols; \
     elem_t *elems; \
   }; \
-  void mtrx_##name##_init(Matrix_##name##_t *m, size_t rows, size_t cols) ; \
-  void mtrx_##name##_del(Matrix_##name##_t *m) ; \
-  void mtrx_##name##_resize(Matrix_##name##_t *m, size_t rows, size_t cols) ; \
-  inline size_t mtrx_##name##_rows(Matrix_##name##_t *m) ; \
-  inline size_t mtrx_##name##_cols(Matrix_##name##_t *m) ; \
-  inline size_t mtrx_##name##_index(Matrix_##name##_t *m, size_t r, size_t c) ; \
-  inline void mtrx_##name##_get(Matrix_##name##_t *m, size_t r, size_t c, elem_t *x) ; \
-  inline void mtrx_##name##_set(Matrix_##name##_t *m, size_t r, size_t c, elem_t x) ; \
+  void matrix_##name##_init(struct Matrix_##name##_t *m, size_t rows, size_t cols) ; \
+  void matrix_##name##_del(struct Matrix_##name##_t *m) ; \
+  void matrix_##name##_resize(struct Matrix_##name##_t *m, size_t rows, size_t cols) ; \
+  size_t matrix_##name##_rows(struct Matrix_##name##_t *m) ; \
+  size_t matrix_##name##_cols(struct Matrix_##name##_t *m) ; \
+  size_t matrix_##name##_index(struct Matrix_##name##_t *m, size_t r, size_t c) ; \
+  void matrix_##name##_get(struct Matrix_##name##_t *m, size_t r, size_t c, elem_t *x) ; \
+  void matrix_##name##_set(struct Matrix_##name##_t *m, size_t r, size_t c, elem_t x) ; \
 
 #define MATRIX_IMPL(name, elem_t) \
   \
-  void mtrx_##name##_init(Matrix_##name##_t *m, size_t rows, size_t cols) { \
+  void matrix_##name##_init(struct Matrix_##name##_t *m, size_t rows, size_t cols) { \
     m->rows = rows; \
     m->cols = cols; \
     m->elems = malloc(sizeof(elem_t) * rows * cols); \
   } \
   \
-  void mtrx_##name##_del(Matrix_##name##_t *m) { \
+  void matrix_##name##_del(struct Matrix_##name##_t *m) { \
     free(m->elems); \
   } \
   \
-  void mtrx_##name##_resize(Matrix_##name##_t *m, size_t rows, size_t cols) { \
+  void matrix_##name##_resize(struct Matrix_##name##_t *m, size_t rows, size_t cols) { \
     elem_t *old = m->elems; \
     m->elems = malloc(sizeof(elem_t) * rows * cols); \
     for (size_t r=0; r<m->rows; ++r) { \
@@ -46,26 +46,31 @@
     free(old); \
   } \
   \
-  inline size_t mtrx_##name##_rows(Matrix_##name##_t *m) { \
+  size_t matrix_##name##_rows(struct Matrix_##name##_t *m) { \
     return m->rows; \
   } \
   \
-  inline size_t mtrx_##name##_cols(Matrix_##name##_t *m) { \
+  size_t matrix_##name##_cols(struct Matrix_##name##_t *m) { \
     return m->cols; \
   } \
   \
-  inline size_t mtrx_##name##_index(Matrix_##name##_t *m, size_t r, size_t c) { \
+  size_t matrix_##name##_index(struct Matrix_##name##_t *m, size_t r, size_t c) { \
     return r*m->cols + c; \
   } \
   \
-  inline void mtrx_##name##_get(Matrix_##name##_t *m, size_t r, size_t c, elem_t *x) { \
-    size_t i = mtrx_##name##_index(m, r, c); \
-    *x = m.elems[i]; \
+  void matrix_##name##_get(struct Matrix_##name##_t *m, size_t r, size_t c, elem_t *x) { \
+    size_t i = matrix_##name##_index(m, r, c); \
+    *x = m->elems[i]; \
   } \
-  inline void mtrx_##name##_set(Matrix_##name##_t *m, size_t r, size_t c, elem_t x) { \
-    size_t i = mtrx_##name##index(m, r, c); \
+  void matrix_##name##_set(struct Matrix_##name##_t *m, size_t r, size_t c, elem_t x) { \
+    size_t i = matrix_##name##_index(m, r, c); \
     m->elems[i] = x; \
   } \
+
+
+#define MATRIX_INIT(name, elem_t) \
+  MATRIX_TYPE(name, elem_t) \
+  MATRIX_IMPL(name, elem_t)
 
 
 #endif
