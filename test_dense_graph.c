@@ -100,9 +100,19 @@ void test_graph() {
     assert(ed == edge_data[edges[i]]);
   }
 
+  printf("testing del_node\n");
   /* test del node */
+  for (uint8_t i=0; i<8; i += 2) {
+    dg_u8_del_node(&g, nodes[i]);
+  }
 
+  printf("testing del_edge\n");
   /* test del edge */
+  for (uint8_t i=0; i<16; i += 2) {
+    dg_u8_del_edge(&g, edges[i]);
+  }
+
+  printf("DONE\n");
 }
 
 int main(int argc, char **argv) {

@@ -14,6 +14,9 @@
  * index_t is a bound on the number of indices the graph will need
  *
  * the graph will grow but will never shrink
+ *
+ * still not clear how best way to deal with deleted nodes/edges is, should the
+ * user be responsible for not asking for data for the nodes they delete?
  */
 #define DG_GROWTH_FACTOR 2
 
@@ -128,7 +131,7 @@
   \
   void dg_##name##_del_node(struct DenseGraph_##name##_t *g, index_t node) { \
     /*make the index available again */ \
-    if (node != g->next_node_index - 1) { \
+    if (g->next_node_index == 0 || node != g->next_node_index - 1) { \
       da_append(&g->node_indices, (void*) &node); \
     } else { \
       --g->next_node_index; \
@@ -142,15 +145,14 @@
   } \
   \
   void dg_##name##_del_edge(struct DenseGraph_##name##_t *g, index_t edge) { \
-    if (edge != g->next_edge_index - 1) { \
+    if (g->next_edge_index == 0 || edge != g->next_edge_index - 1) { \
       da_append(&g->edge_indices, (void*) &edge); \
     } else { \
       --g->next_edge_index; \
     } \
     struct _EdgeData_##name##_t *ed_p; \
-    da_get(&g->edge_data, edge, (void**) &ed_p); \
+    da_get_ref(&g->edge_data, edge, (void**) &ed_p); \
     matrix_##index_t##_set(&g->matrix, ed_p->u, ed_p->v, -1); \
-    da_append(&g->edge_indices, (void*) &edge); \
     --g->num_edges; \
   } \
   \
