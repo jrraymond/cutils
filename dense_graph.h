@@ -222,8 +222,12 @@
   } \
   \
   void _dg_##name##_print(struct DenseGraph_##name##_t *g, void (*print_node_data)(node_data_t nd), void (*print_edge_data)(edge_data_t ed), void (*print_index_t)(index_t i)) { \
+    printf("Node masks: \n"); \
+    ba_print(&g->nodes_mask); \
     printf("Node data:\n"); \
     for (size_t i=0; i<g->node_data.size; ++i) { \
+      if (!ba_get(&g->nodes_mask, i)) \
+        continue; \
       printf("%zu->", i); \
       node_data_t nd; \
       da_get(&g->node_data, i, (void*) &nd); \
@@ -231,8 +235,12 @@
       printf(","); \
     } \
     printf("\n"); \
+    printf("Edge masks: \n"); \
+    ba_print(&g->edges_mask); \
     printf("Edge data:\n"); \
     for (size_t i=0; i<g->edge_data.size; ++i) { \
+      if (!ba_get(&g->edges_mask, i)) \
+        continue; \
       printf("%zu->", i); \
       struct _EdgeData_##name##_t *ed; \
       da_get_ref(&g->edge_data, i, (void**) &ed); \
@@ -243,7 +251,7 @@
   } \
   \
   size_t dg_##name##_nodes_begin(struct DenseGraph_##name##_t *g) { \
-    size_t itr = 0; \
+    size_t itr = -1; \
     dg_##name##_nodes_next(g, &itr); \
     return itr; \
   } \

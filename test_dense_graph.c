@@ -99,19 +99,6 @@ void test_graph() {
     printf("\t%u: %u->%c|%c\n", i, edges[i], ed, edge_data[edges[i]]);
     assert(ed == edge_data[edges[i]]);
   }
-
-  printf("testing del_node\n");
-  /* test del node */
-  for (uint8_t i=0; i<8; i += 2) {
-    dg_u8_del_node(&g, nodes[i]);
-  }
-
-  printf("testing del_edge\n");
-  /* test del edge */
-  for (uint8_t i=0; i<16; i += 2) {
-    dg_u8_del_edge(&g, edges[i]);
-  }
-
   printf("testing node forward iteration\n");
   for (size_t itr = dg_u8_nodes_begin(&g);
       itr != dg_u8_nodes_end(&g);
@@ -130,6 +117,43 @@ void test_graph() {
     dg_u8_get_node(&g, itr, &nd);
     printf("\t%zu:%c\n", itr, nd);
   } while (itr != dg_u8_nodes_begin(&g));
+
+
+  printf("testing del_node\n");
+  /* test del node */
+  for (uint8_t i=0; i<8; i += 2) {
+    printf("%u,", nodes[i]);
+    dg_u8_del_node(&g, nodes[i]);
+  }
+  printf("\n");
+
+  printf("testing del_edge\n");
+  /* test del edge */
+  for (uint8_t i=0; i<16; i += 2) {
+    printf("%u,", edges[i]);
+    dg_u8_del_edge(&g, edges[i]);
+  }
+  printf("\n");
+
+  printf("testing node forward iteration\n");
+  for (size_t itr = dg_u8_nodes_begin(&g);
+      itr != dg_u8_nodes_end(&g);
+      dg_u8_nodes_next(&g, &itr)
+      ) {
+    char nd;
+    dg_u8_get_node(&g, itr, &nd);
+    printf("\t%zu:%c\n", itr, nd);
+  }
+
+  printf("testing node backward iteration\n");
+  itr = dg_u8_nodes_end(&g);
+  do {
+    dg_u8_nodes_prev(&g, &itr);
+    char nd;
+    dg_u8_get_node(&g, itr, &nd);
+    printf("\t%zu:%c\n", itr, nd);
+  } while (itr != dg_u8_nodes_begin(&g));
+
 
   printf("DONE\n");
 }
