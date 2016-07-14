@@ -3,6 +3,7 @@
 
 #include "matrix.h"
 #include "dynamic_array.h"
+#include "bitarray.h"
 
 #include <stdint.h>
 
@@ -21,6 +22,7 @@
  * so for now everything has undefined behavior if you delete any nodes
  */
 #define DG_GROWTH_FACTOR 2
+#define DG_MASK_GROWTH_FACTOR 1
 
 #define DENSE_GRAPH_TYPE(name, index_t, node_data_t, edge_data_t) \
   \
@@ -42,9 +44,13 @@
     struct DynArray edge_data; \
     struct DynArray node_indices; \
     struct DynArray edge_indices; \
+    struct BitArray nodes_mask; \
+    struct BitArray edges_mask; \
   }; \
   \
   void dg_##name##_init(struct DenseGraph_##name##_t *g, index_t node_capacity, index_t edge_capacity) ; \
+  \
+  void dg_##name##_del(struct DenseGraph_##name##_t *g) ; \
   \
   index_t dg_##name##_add_node(struct DenseGraph_##name##_t *g, node_data_t nd) ; \
   \
@@ -93,6 +99,20 @@
     da_DynArray_init(&g->node_indices, 0, sizeof(index_t)); \
     g->next_edge_index = 0; \
     da_DynArray_init(&g->edge_indices, 0, sizeof(index_t)); \
+    \
+    ba_init(&g->nodes_mask, node_capacity); \
+    ba_init(&g->edges_mask, edge_capacity); \
+  } \
+  \
+  void dg_##name##_del(struct DenseGraph_##name##_t *g) { \
+    \
+    matrix_##index_t##_del(&g->matrix); \
+    \
+    da_DynArray_del(&g->node_data); \
+    da_DynArray_del(&g->edge_data); \
+    \
+    ba_del(&g->nodes_mask); \
+    ba_del(&g->edges_mask); \
   } \
   \
   index_t dg_##name##_add_node(struct DenseGraph_##name##_t *g, node_data_t nd) { \
@@ -116,6 +136,10 @@
     } else { \
       da_set(&g->node_data, next_index, (void*) &nd); \
     } \
+    \
+    /* update the mask */ \
+    ba_set_grow(&g->nodes_mask, next_index, true, DG_MASK_GROWTH_FACTOR); \
+    \
     ++g->num_nodes; \
     return next_index; \
   } \
@@ -137,6 +161,9 @@
     } else { \
       da_set(&g->edge_data, next_index, (void*) &full_ed); \
     } \
+    \
+    ba_set_grow(&g->edges_mask, next_index, true, DG_MASK_GROWTH_FACTOR); \
+    \
     ++g->num_edges; \
     return next_index; \
   } \
@@ -153,6 +180,9 @@
       matrix_##index_t##_set(&g->matrix, i, node, -1); \
       matrix_##index_t##_set(&g->matrix, node, i, -1); \
     } \
+    /* update the mask */ \
+    ba_set(&g->nodes_mask, node, false); \
+    \
     --g->num_nodes; \
   } \
   \
@@ -165,6 +195,9 @@
     struct _EdgeData_##name##_t *ed_p; \
     da_get_ref(&g->edge_data, edge, (void**) &ed_p); \
     matrix_##index_t##_set(&g->matrix, ed_p->u, ed_p->v, -1); \
+    \
+    ba_set(&g->edges_mask, edge, false); \
+    \
     --g->num_edges; \
   } \
   \
@@ -220,9 +253,26 @@
   } \
   \
   void dg_##name##_nodes_next(struct DenseGraph_##name##_t *g, size_t *itr) { \
+    size_t next = *itr + 1; \
+    while (next < g->next_node_index) { \
+      if (ba_get(&g->nodes_mask, next)) { \
+        break; \
+      } \
+      ++next; \
+    } \
+    *itr = next; \
   } \
   \
   void dg_##name##_nodes_prev(struct DenseGraph_##name##_t *g, size_t *itr) { \
+    /* doesn't check for underflow */ \
+    size_t next = *itr - 1; \
+    while (next > 0) { \
+      if (ba_get(&g->nodes_mask, next)) { \
+        break; \
+      } \
+      --next; \
+    } \
+    *itr = next; \
   } \
 
 

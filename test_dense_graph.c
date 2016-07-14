@@ -112,6 +112,25 @@ void test_graph() {
     dg_u8_del_edge(&g, edges[i]);
   }
 
+  printf("testing node forward iteration\n");
+  for (size_t itr = dg_u8_nodes_begin(&g);
+      itr != dg_u8_nodes_end(&g);
+      dg_u8_nodes_next(&g, &itr)
+      ) {
+    char nd;
+    dg_u8_get_node(&g, itr, &nd);
+    printf("\t%zu:%c\n", itr, nd);
+  }
+
+  printf("testing node backward iteration\n");
+  size_t itr = dg_u8_nodes_end(&g);
+  do {
+    dg_u8_nodes_prev(&g, &itr);
+    char nd;
+    dg_u8_get_node(&g, itr, &nd);
+    printf("\t%zu:%c\n", itr, nd);
+  } while (itr != dg_u8_nodes_begin(&g));
+
   printf("DONE\n");
 }
 

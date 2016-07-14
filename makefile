@@ -23,8 +23,8 @@ test_matrix: matrix.h
 test_bitarray: bitarray.o
 	$(CC) test_bitarray.c -o test_bitarray.out bitarray.o $(CFLAGS)
 
-test_dense_graph: dense_graph.h dynamic_array.o
-	$(CC) test_dense_graph.c -o test_dense_graph.out $(CFLAGS) dynamic_array.o
+test_dense_graph: dense_graph.h dynamic_array.o bitarray.o
+	$(CC) test_dense_graph.c -o test_dense_graph.out $(CFLAGS) dynamic_array.o bitarray.o 
 
 .PHONY: tests
 tests: 
