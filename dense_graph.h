@@ -17,6 +17,8 @@
  *
  * still not clear how best way to deal with deleted nodes/edges is, should the
  * user be responsible for not asking for data for the nodes they delete?
+ *
+ * so for now everything has undefined behavior if you delete any nodes
  */
 #define DG_GROWTH_FACTOR 2
 
@@ -65,6 +67,16 @@
       void (*print_node_data)(node_data_t nd), \
       void (*print_edge_data)(edge_data_t ed), \
       void (*print_index_t)(index_t i)) ; \
+  \
+  size_t dg_##name##_nodes_begin(struct DenseGraph_##name##_t *g) ; \
+  \
+  size_t dg_##name##_nodes_end(struct DenseGraph_##name##_t *g) ; \
+  \
+  void dg_##name##_nodes_next(struct DenseGraph_##name##_t *g, size_t *itr); \
+  \
+  void dg_##name##_nodes_prev(struct DenseGraph_##name##_t *g, size_t *itr); \
+
+
 
 
 #define DENSE_GRAPH_IMPL(name, index_t, node_data_t, edge_data_t) \
@@ -196,11 +208,27 @@
     } \
     printf("\n"); \
   } \
+  \
+  size_t dg_##name##_nodes_begin(struct DenseGraph_##name##_t *g) { \
+    size_t itr = 0; \
+    dg_##name##_nodes_next(g, &itr); \
+    return itr; \
+  } \
+  \
+  size_t dg_##name##_nodes_end(struct DenseGraph_##name##_t *g) { \
+    return g->next_node_index; \
+  } \
+  \
+  void dg_##name##_nodes_next(struct DenseGraph_##name##_t *g, size_t *itr) { \
+  } \
+  \
+  void dg_##name##_nodes_prev(struct DenseGraph_##name##_t *g, size_t *itr) { \
+  } \
 
 
 #define DENSE_GRAPH_INIT(name, index_t, node_data_t, edge_data_t) \
   DENSE_GRAPH_TYPE(name, index_t, node_data_t, edge_data_t) \
-  DENSE_GRAPH_IMPL(name, index_t, node_data_t, edge_data_t) \
+  DENSE_GRAPH_IMPL(name, index_t, node_data_t, edge_data_t)
 
 
 #endif

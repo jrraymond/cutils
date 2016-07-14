@@ -10,7 +10,7 @@ OUTPUT=libcutils.a
 .c.o: 
 	$(CC) -c $(CFLAGS) $<
 
-$(OUTPUT): dynamic_array.o hashtable.o hash_functions.o
+$(OUTPUT): dynamic_array.o hashtable.o hash_functions.o bitarray.o
 	ar ru $@ $^
 	ranlib $@
 
@@ -20,6 +20,9 @@ test_unordered_set: unordered_set.h
 test_matrix: matrix.h
 	$(CC) test_matrix.c -o test_matrix.out $(CFLAGS)
 
+test_bitarray: bitarray.o
+	$(CC) test_bitarray.c -o test_bitarray.out bitarray.o $(CFLAGS)
+
 test_dense_graph: dense_graph.h dynamic_array.o
 	$(CC) test_dense_graph.c -o test_dense_graph.out $(CFLAGS) dynamic_array.o
 
@@ -27,6 +30,8 @@ test_dense_graph: dense_graph.h dynamic_array.o
 tests: 
 	$(MAKE) test_unordered_set
 	$(MAKE) test_matrix
+	$(MAKE) test_bitarray
+	$(MAKE) test_dense_graph
 
 .PHONY: clean
 clean:
