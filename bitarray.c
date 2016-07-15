@@ -75,3 +75,8 @@ void ba_print(struct BitArray *ba) {
   }
   printf("\n");
 }
+
+size_t ba_size(struct BitArray *ba) {
+  return ba->size;
+}
+
