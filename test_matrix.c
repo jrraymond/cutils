@@ -12,7 +12,7 @@ MATRIX_INIT(char, char)
 
 
 void test_get_set() {
-  struct Matrix_u8_t m;
+  struct Matrix_u8 m;
   matrix_u8_init(&m, 8, 8);
   for (uint8_t i=0; i<8; ++i) {
     for (uint8_t j=0; j<8; ++j) {
@@ -31,7 +31,7 @@ void test_get_set() {
 }
 
 void test_resize() {
-  struct Matrix_char_t m;
+  struct Matrix_char m;
   matrix_char_init(&m, 4, 4);
 
   for (uint8_t i=0; i<4; ++i) {
