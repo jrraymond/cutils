@@ -54,7 +54,8 @@
   scope size_t us_##name##_begin(us_##name##_t *set);\
   scope size_t us_##name##_end(us_##name##_t *set); \
   scope void us_##name##_next(us_##name##_t *set, size_t *itr); \
-  scope void us_##name##_prev(us_##name##_t *set, size_t *itr);
+  scope void us_##name##_prev(us_##name##_t *set, size_t *itr); \
+  scope bool us_##name##_eq(us_##name##_t *a, us_##name##_t *b);
 
 
 
@@ -222,13 +223,33 @@
     *itr = last; \
     return; \
   } \
-
+  \
+  scope bool us_##name##_eq(us_##name##_t *a, us_##name##_t *b) { \
+    if (a->size != b->size) { \
+      return false; \
+    } \
+    for (size_t itr = us_##name##_begin(a); \
+        itr != us_##name##_end(a); \
+        us_##name##_next(a, &itr) \
+        ) { \
+      elem_t *elem = &a->elems[itr]; \
+      if (!us_##name##_contains(a, *elem)) { \
+        return false; \
+      } \
+    } \
+    return true; \
+  } \
 
 
 
 #define UNORDERED_SET_DECLARE(name, scope, elem_t, hash_t) \
   UNORDERED_SET_TYPE(name, elem_t, hash_t) \
   UNORDERED_SET_SPEC(name, scope, elem_t, hash_t)
+
+
+#define UNORDERED_SET_INIT(name, scope, elem_t, hash_t, _hash_f, _eq_f) \
+  UNORDERED_SET_DECLARE(name, scope, elem_t, hash_t) \
+  UNORDERED_SET_IMPL(name, scope, elem_t, hash_t, _hash_f, _eq_f) \
 
 
 
