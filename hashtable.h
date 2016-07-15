@@ -1,5 +1,5 @@
-#ifndef __HASHTABLE_H
-#define __HASHTABLE_H
+#ifndef __CUTILS_HASHTABLE_H
+#define __CUTILS_HASHTABLE_H
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
@@ -18,7 +18,7 @@
  * keys : array for keys
  * values : array for values
  */
-struct hashtable {
+struct Hashtable {
   unsigned int (*hash_fn)(void*);
   bool (*cmp)(void*, void*);
   int capacity;
@@ -33,7 +33,7 @@ struct hashtable {
 /* Initializes an uninitialized hashtable
  */
 void ht_init(
-  struct hashtable *htable,       //ptr to hashtable
+  struct Hashtable *htable,       //ptr to hashtable
   unsigned int (*hash_fn)(void*), //hash function
   bool (*cmp_fn)(void*, void*),   //key comparison function
   size_t key_sz,                  //key size
@@ -44,7 +44,7 @@ void ht_init(
 /* Free memory held be hashtable
  * does NOT free memory held by the keys or values in the hashtable
  */
-void ht_del(struct hashtable *htable);
+void ht_del(struct Hashtable *htable);
 
 /*  Looks up a key in a hashtable
  *  htable : ptr to the hashtable
@@ -53,27 +53,27 @@ void ht_del(struct hashtable *htable);
  *
  * If key is found *value is set to reference the value
  */
-bool ht_get_ref(struct hashtable *htable, void *key, void **value);
+bool ht_get_ref(struct Hashtable *htable, void *key, void **value);
 
 /*
  */
-void ht_insert(struct hashtable *htable, void *key, void *value);
+void ht_insert(struct Hashtable *htable, void *key, void *value);
 
 /*
  */
-void ht_rm(struct hashtable *htable, void *key);
+void ht_rm(struct Hashtable *htable, void *key);
 
 /*
  */
-void ht_set(struct hashtable *htable, void *key, void *value);
+void ht_set(struct Hashtable *htable, void *key, void *value);
 
 /*
  */
-void ht_iters(struct hashtable *htable, void* *begin, void* *end);
+void ht_iters(struct Hashtable *htable, void* *begin, void* *end);
 
 /*
  */
-void ht_rehash(struct hashtable *ht, int sz);
+void ht_rehash(struct Hashtable *ht, int sz);
 
 static const int ht_empty = 0;
 static const int ht_dummy = 1;

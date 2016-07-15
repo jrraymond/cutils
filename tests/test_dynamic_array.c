@@ -4,26 +4,26 @@
 #include "dynamic_array.h"
 
 void test() {
-  darray_t arr;
-  mk_darray(&arr, 1, sizeof(int));
+  struct DynArray arr;
+  da_DynArray_init(&arr, 0, sizeof(int));
   for (int i=0; i<1000; ++i) {
     if (i < 500)
-      append(&arr, &i);
+      da_append(&arr, &i);
     else
-      pop(&arr);
+      da_pop(&arr);
   }
   assert(arr.size == 0);
-  rm_darray(&arr);
-  mk_darray(&arr, 8, sizeof(char));
+  da_DynArray_del(&arr);
+  da_DynArray_init(&arr, 8, sizeof(char));
   for (int i=0; i<1000; ++i) {
     char c = 'J';
     if (!(i%2))
-      append(&arr, &c);
+      da_append(&arr, &c);
     else
-      pop(&arr);
+      da_pop(&arr);
   }
   assert(arr.size == 0);
-  rm_darray(&arr);
+  da_DynArray_del(&arr);
 }
 
 int main(int argc, char** argv) {

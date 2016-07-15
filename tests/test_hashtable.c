@@ -5,13 +5,18 @@
 #include <assert.h>
 #include "hashtable.h"
 
-int int_hash(void* p) {
+unsigned int int_hash(void* p) {
 	int x = * (int*) p;
 	x = ((x >> 16) ^ x) * 0x45d9f3b;
 	x = ((x >> 16) ^ x) * 0x45d9f3b;
 	x = ((x >> 16) ^ x);
 	return x;
 }
+
+bool int_cmp(void* a, void *b) {
+  return ((int*) a) == ((int*) b);
+}
+
 void test_flags() {
   int* flags = calloc(2, sizeof(int));
   for (int i=0; i<sizeof(int); ++i)
@@ -44,18 +49,17 @@ void test_ops() {
 	int* checker = malloc(sz*sizeof(int));
   for (int i=0; i<sz; ++i)
     checker[i] = -1;
-  hashtable_t ht;
-  ht_mk(&ht, &int_hash, sizeof(int), sizeof(int), sz);
+  struct Hashtable ht;
+  ht_init(&ht, &int_hash, &int_cmp, sizeof(int), sizeof(int), sz);
   printf("HASHTABLE: size[%d], capacity[%d]\n", ht.size, ht.capacity);
   printf("INSERTIONS\n");
 	for (int i=0; i<sz; i+=3) { 	//insert multiples of 3
-    int** vp;
 		ht_insert(&ht, &i, &i);
 		checker[i] = i;
 	}
 	for (int i=0; i<sz; ++i) { 		//check insertions and lookup
 		int* vp;
-		bool found = ht_lookup(&ht, &i, (void**) &vp);
+		bool found = ht_get_ref(&ht, &i, (void**) &vp);
 		assert((!found && checker[i] == -1) || (found && *vp == checker[i]));
 	}
   printf("HASHTABLE: size[%d], capacity[%d]\n", ht.size, ht.capacity);
@@ -67,29 +71,28 @@ void test_ops() {
 	}
 	for (int i=0; i<sz; ++i) {			//check sets
 		int* vp;
-		bool found = ht_lookup(&ht, &i, (void**) &vp);
+		bool found = ht_get_ref(&ht, &i, (void**) &vp);
 		assert((!found && checker[i] == -1) || (found && *vp == checker[i]));
 	}
   printf("HASHTABLE: size[%d], capacity[%d]\n", ht.size, ht.capacity);
   printf("DEL\n");
 	for (int i=0; i<sz/10; i += 3) { 	//del everything
-		int v = 0;
-		ht_del(&ht, &i);
+		ht_rm(&ht, &i);
 		checker[i] = -1;
 	}
   printf("HASHTABLE: size[%d], capacity[%d]\n", ht.size, ht.capacity);
 	for (int i=0; i<sz; ++i) {			//check deletes
 		int* vp;
-		bool found = ht_lookup(&ht, &i, (void**) &vp);
+		bool found = ht_get_ref(&ht, &i, (void**) &vp);
 		assert((!found && checker[i] == -1) || (found && *vp == checker[i]));
 	}
-  ht_rm(&ht);
+  ht_del(&ht);
   printf("HASHTABLE INSERT/LOOKUP/DELETE TEST COMPLETE\n");
 }
 
 void test_resizing() {
-  hashtable_t ht;
-  ht_mk(&ht, &int_hash, sizeof(int), sizeof(int), 1);
+  struct Hashtable ht;
+  ht_init(&ht, &int_hash, &int_cmp, sizeof(int), sizeof(int), 1);
   printf("HASHTABLE: size[%d], capacity[%d]\n", ht.size, ht.capacity);
   for (int i=0; i<100; ++i) {
     ht_insert(&ht, &i, &i);
@@ -97,11 +100,11 @@ void test_resizing() {
   }
   printf("HASHTABLE: size[%d], capacity[%d]\n", ht.size, ht.capacity);
   for (int i=99; i>=0; --i) {
-    ht_del(&ht, &i);
+    ht_rm(&ht, &i);
     assert(ht.size == i);
   }
   printf("HASHTABLE: size[%d], capacity[%d]\n", ht.size, ht.capacity);
-  ht_rm(&ht);
+  ht_del(&ht);
   printf("HASHTABLE RESIZING TEST COMPLETE\n");
 }
 

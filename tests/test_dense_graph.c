@@ -18,7 +18,7 @@ void print_char(char c) {
 
 
 void test_graph() {
-  struct DenseGraph_u8_t g;
+  struct DenseGraph_u8 g;
   dg_u8_init(&g, 4, 4);
 
   /* first we add 4 nodes */

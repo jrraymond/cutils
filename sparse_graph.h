@@ -1,5 +1,5 @@
-#ifndef __SPARSE_GRAPH_H
-#define __SPARSE_GRAPH_H
+#ifndef __CUTILS_SPARSE_GRAPH_H
+#define __CUTILS_SPARSE_GRAPH_H
 
 /* TODO: linked list implementation */
 #define SPARSE_GRAPH_TYPE(index_t) \

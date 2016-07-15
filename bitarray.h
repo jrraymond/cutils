@@ -1,5 +1,5 @@
-#ifndef __BITARRAY_C
-#define __BITARRAY_C
+#ifndef __CUTILS_BITARRAY_C
+#define __CUTILS_BITARRAY_C
 
 #include <stdbool.h>
 #include <stdlib.h>

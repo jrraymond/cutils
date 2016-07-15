@@ -16,7 +16,7 @@ void ht_setstatus(int *flags, int i, int st) {
 }
 
 void ht_init(
-  struct hashtable *htable,
+  struct Hashtable *htable,
   unsigned int (*hash_fn)(void*),
   bool (*cmp_fn)(void*, void*),
   size_t key_sz,
@@ -35,13 +35,13 @@ void ht_init(
 }
 
 
-void ht_del(struct hashtable *htable) {
+void ht_del(struct Hashtable *htable) {
   free(htable->flags);
   free(htable->keys);
   free(htable->values);
 }
 
-bool ht_get_ref(struct hashtable *htable, void *key, void **value) {
+bool ht_get_ref(struct Hashtable *htable, void *key, void **value) {
   unsigned int k, ix, found;
   k = htable->hash_fn(key);
   debug_print("get_ref: %s@%p, %u\n", *(char**)key, *(char**)key, k);
@@ -62,7 +62,7 @@ bool ht_get_ref(struct hashtable *htable, void *key, void **value) {
   return true;
 }
 
-void ht_rehash(struct hashtable *ht, int sz) {
+void ht_rehash(struct Hashtable *ht, int sz) {
   int old_c = ht->capacity;
   int *old_flags = ht->flags;
   void *old_keys = ht->keys;
@@ -82,7 +82,7 @@ void ht_rehash(struct hashtable *ht, int sz) {
   free(old_vals);
 }
 
-void ht_insert(struct hashtable *htable, void *key, void *value) {
+void ht_insert(struct Hashtable *htable, void *key, void *value) {
   unsigned int k, ix;
   k = htable->hash_fn(key);
   for (int i=0; i<htable->capacity; ++i) {
@@ -102,7 +102,7 @@ void ht_insert(struct hashtable *htable, void *key, void *value) {
 }
 
 
-void ht_rm(struct hashtable *htable, void *key) {
+void ht_rm(struct Hashtable *htable, void *key) {
   int k, ix, found;
   k = htable->hash_fn(key);
   found = false;
@@ -119,7 +119,7 @@ void ht_rm(struct hashtable *htable, void *key) {
     ht_rehash(htable, htable->capacity/2);
 }
 
-void ht_set(struct hashtable *htable, void *key, void *value) {
+void ht_set(struct Hashtable *htable, void *key, void *value) {
   int k, ix, found;
   k = htable->hash_fn(key);
   found = 0;
@@ -134,7 +134,7 @@ void ht_set(struct hashtable *htable, void *key, void *value) {
   memcpy(htable->values+ix*htable->value_sz, value, htable->value_sz);
 }
 
-void ht_iters(struct hashtable *htable, void* *begin, void* *end) {
+void ht_iters(struct Hashtable *htable, void* *begin, void* *end) {
   printf("UNIMPLEMENTED\n");
   exit(0);
 }

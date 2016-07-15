@@ -1,5 +1,6 @@
-#ifndef __DYNAMIC_ARRAY_H
-#define __DYNAMIC_ARRAY_H
+#ifndef __CUTILS_DYNAMIC_ARRAY_H
+#define __CUTILS_DYNAMIC_ARRAY_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

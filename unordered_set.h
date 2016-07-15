@@ -1,5 +1,5 @@
-#ifndef __UNORDERED_SET_H
-#define __UNORDERED_SET_H
+#ifndef __CUTILS_UNORDERED_SET_H
+#define __CUTILS_UNORDERED_SET_H
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
  * use linear probing j = 5*j + 1 + perturb as guaranteed to hit every slot
  * before repeating.
  */
-#define US_LOAD_FACTOR (2.0/3.0)
+#define CU_US_LOAD_FACTOR (2.0/3.0)
 
 /* macros for checking flags. we need to keep track of 3 states: empty,
  * occupied, deleted. This requires 2 bits. 00 -> empty, 01->occupied,
@@ -32,36 +32,36 @@
 
 
 #define UNORDERED_SET_TYPE(name, elem_t, hash_t) \
-  typedef struct {                                                         \
+  struct USet_##name {                                                         \
     size_t capacity;                                                       \
     size_t size;                                                           \
     uint8_t *flags;                                                        \
     hash_t *hashes;                                                        \
     elem_t *elems;                                                         \
-  } us_##name##_t ;                                                        \
+  } ;                                                        \
 
 
 
 #define UNORDERED_SET_SPEC(name, scope, elem_t, hash_t)            \
-  scope void us_##name##_init(us_##name##_t *set, size_t capacity);  \
-  scope void us_##name##_del(us_##name##_t *set); \
-  scope void us_##name##_rehash(us_##name##_t *set, size_t capacity); \
-  scope void us_##name##_insert(us_##name##_t *set, elem_t elem); \
-  scope size_t us_##name##_find(us_##name##_t *set, elem_t elem) ; \
-  scope bool us_##name##_contains(us_##name##_t *set, elem_t elem) ; \
-  scope bool us_##name##_remove(us_##name##_t *set, elem_t elem) ; \
-  scope void _us_##name##_debug_print(us_##name##_t *set, void (*print_hash)(hash_t), void (*print_elem)(elem_t)) ; \
-  scope size_t us_##name##_begin(us_##name##_t *set);\
-  scope size_t us_##name##_end(us_##name##_t *set); \
-  scope void us_##name##_next(us_##name##_t *set, size_t *itr); \
-  scope void us_##name##_prev(us_##name##_t *set, size_t *itr); \
-  scope bool us_##name##_eq(us_##name##_t *a, us_##name##_t *b);
+  scope void uset_##name##_init(struct USet_##name *set, size_t capacity);  \
+  scope void uset_##name##_del(struct USet_##name *set); \
+  scope void uset_##name##_rehash(struct USet_##name *set, size_t capacity); \
+  scope void uset_##name##_insert(struct USet_##name *set, elem_t elem); \
+  scope size_t uset_##name##_find(struct USet_##name *set, elem_t elem) ; \
+  scope bool uset_##name##_contains(struct USet_##name *set, elem_t elem) ; \
+  scope bool uset_##name##_remove(struct USet_##name *set, elem_t elem) ; \
+  scope void _uset_##name##_debug_print(struct USet_##name *set, void (*print_hash)(hash_t), void (*print_elem)(elem_t)) ; \
+  scope size_t uset_##name##_begin(struct USet_##name *set);\
+  scope size_t uset_##name##_end(struct USet_##name *set); \
+  scope void uset_##name##_next(struct USet_##name *set, size_t *itr); \
+  scope void uset_##name##_prev(struct USet_##name *set, size_t *itr); \
+  scope bool uset_##name##_eq(struct USet_##name *a, struct USet_##name *b);
 
 
 
 #define UNORDERED_SET_IMPL(name, scope, elem_t, hash_t, _hash_f, _eq_f)            \
                                                                            \
-  scope void us_##name##_init(us_##name##_t *set, size_t capacity) {  \
+  scope void uset_##name##_init(struct USet_##name *set, size_t capacity) {  \
     set->capacity = capacity; \
     set->size = 0; \
     set->flags = calloc(capacity / sizeof(uint8_t), sizeof(uint8_t)); \
@@ -69,14 +69,14 @@
     set->elems = malloc(capacity * sizeof(elem_t)); \
   } \
     \
-  scope void us_##name##_del(us_##name##_t *set) { \
+  scope void uset_##name##_del(struct USet_##name *set) { \
     free(set->flags); \
     free(set->hashes); \
     free(set->elems); \
   } \
  \
-  scope void us_##name##_insert(us_##name##_t *set, elem_t elem); \
-  scope void us_##name##_rehash(us_##name##_t *set, size_t capacity) { \
+  scope void uset_##name##_insert(struct USet_##name *set, elem_t elem); \
+  scope void uset_##name##_rehash(struct USet_##name *set, size_t capacity) { \
     uint8_t *old_flags = set->flags; \
     hash_t *old_hashes = set->hashes; \
     elem_t *old_elems = set->elems; \
@@ -92,7 +92,7 @@
       size_t offset = __us_flag_offset(i); \
       uint8_t bucket_status = __us_flag_get(old_flags[ix], offset); \
       if (bucket_status == US_FLAG_OCC) { \
-        us_##name##_insert(set, old_elems[i]); \
+        uset_##name##_insert(set, old_elems[i]); \
       } \
     } \
     \
@@ -100,9 +100,9 @@
     free(old_hashes); \
     free(old_elems); \
   } \
-  scope void us_##name##_insert(us_##name##_t *set, elem_t elem) { \
-    if (set->capacity * US_LOAD_FACTOR < set->size) { \
-      us_##name##_rehash(set, set->capacity << 1); \
+  scope void uset_##name##_insert(struct USet_##name *set, elem_t elem) { \
+    if (set->capacity * CU_US_LOAD_FACTOR < set->size) { \
+      uset_##name##_rehash(set, set->capacity << 1); \
     } \
     hash_t hsh = _hash_f(elem); \
     size_t j = hsh % set->capacity; \
@@ -121,7 +121,7 @@
       } \
     } \
   } \
-  scope size_t us_##name##_find(us_##name##_t *set, elem_t elem) { \
+  scope size_t uset_##name##_find(struct USet_##name *set, elem_t elem) { \
     hash_t hsh = _hash_f(elem); \
     size_t j = hsh % set->capacity; \
     for(;;) { \
@@ -140,11 +140,11 @@
       } \
     } \
   } \
-  scope bool us_##name##_contains(us_##name##_t *set, elem_t elem) { \
-    return us_##name##_find(set, elem) != set->capacity; \
+  scope bool uset_##name##_contains(struct USet_##name *set, elem_t elem) { \
+    return uset_##name##_find(set, elem) != set->capacity; \
   } \
-  scope bool us_##name##_remove(us_##name##_t *set, elem_t elem) { \
-    size_t i = us_##name##_find(set, elem); \
+  scope bool uset_##name##_remove(struct USet_##name *set, elem_t elem) { \
+    size_t i = uset_##name##_find(set, elem); \
     if (i == set->capacity) { \
       return false; \
     } \
@@ -154,7 +154,7 @@
     --set->size; \
     return true; \
   } \
-  scope void _us_##name##_debug_print(us_##name##_t *set, void (*print_hash)(hash_t), void (*print_elem)(elem_t)) { \
+  scope void _uset_##name##_debug_print(struct USet_##name *set, void (*print_hash)(hash_t), void (*print_elem)(elem_t)) { \
     for (int i=0; i<set->capacity; ++i) { \
       size_t ix = __us_flag_index(i); \
       size_t offset = __us_flag_offset(i); \
@@ -183,18 +183,18 @@
     } \
   } \
   \
-  scope size_t us_##name##_begin(us_##name##_t *set) {\
+  scope size_t uset_##name##_begin(struct USet_##name *set) {\
     size_t last = -1; \
-    us_##name##_next(set, &last); \
+    uset_##name##_next(set, &last); \
     return last; \
   } \
   \
-  scope size_t us_##name##_end(us_##name##_t *set) { \
+  scope size_t uset_##name##_end(struct USet_##name *set) { \
     size_t last = set->capacity; \
     return last; \
   } \
   \
-  scope void us_##name##_next(us_##name##_t *set, size_t *itr) {\
+  scope void uset_##name##_next(struct USet_##name *set, size_t *itr) {\
     size_t next = *itr+1; \
     while (next < set->capacity) { \
       size_t ix = __us_flag_index(next); \
@@ -209,7 +209,7 @@
     return; \
   } \
   \
-  scope void us_##name##_prev(us_##name##_t *set, size_t *itr) { \
+  scope void uset_##name##_prev(struct USet_##name *set, size_t *itr) { \
     size_t last = *itr; \
     while (last > 0) { \
       --last; \
@@ -224,16 +224,16 @@
     return; \
   } \
   \
-  scope bool us_##name##_eq(us_##name##_t *a, us_##name##_t *b) { \
+  scope bool uset_##name##_eq(struct USet_##name *a, struct USet_##name *b) { \
     if (a->size != b->size) { \
       return false; \
     } \
-    for (size_t itr = us_##name##_begin(a); \
-        itr != us_##name##_end(a); \
-        us_##name##_next(a, &itr) \
+    for (size_t itr = uset_##name##_begin(a); \
+        itr != uset_##name##_end(a); \
+        uset_##name##_next(a, &itr) \
         ) { \
       elem_t *elem = &a->elems[itr]; \
-      if (!us_##name##_contains(a, *elem)) { \
+      if (!uset_##name##_contains(a, *elem)) { \
         return false; \
       } \
     } \
