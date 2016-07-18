@@ -2,8 +2,11 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 
-#define BA_MODULUS (8 * sizeof(int))
+#define BA_BYTE 8
+#define BA_MODULUS (BA_BYTE * sizeof(int))
+
 
 static inline int ba_slot(size_t i) {
   return i / BA_MODULUS;
@@ -57,6 +60,12 @@ void ba_set(struct BitArray *ba, size_t i, bool b) {
   size_t offset = ba_offset(i);
   ba->bits[slot] &= ~(1U << offset);
   ba->bits[slot] |= b << offset;
+}
+
+void ba_set_all(struct BitArray *ba, bool b) {
+  size_t n = ceil(ba->size / BA_BYTE);
+  int c = b ? 0xFF : 0x00;
+  memset(ba->bits, c, n);
 }
 
 bool ba_get(struct BitArray *ba, size_t i) {

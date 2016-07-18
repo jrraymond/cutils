@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 /** BitArray
- *
+ * size in # of bits
  */
 struct BitArray {
   size_t size;
@@ -29,6 +29,10 @@ void ba_resize(struct BitArray *ba, size_t new_capacity);
 /** Set bit at index i to b. No bounds checking.
  */
 void ba_set(struct BitArray *ba, size_t i, bool b) ;
+
+/** Set all bits to true or false
+ */
+void ba_set_all(struct BitArray *ba, bool b) ;
 
 /** Set a bit, growing the capacity of the bitarray if the index is out of
  * bounds by growth_factor.
