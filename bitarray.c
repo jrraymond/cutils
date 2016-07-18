@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 #define BA_BYTE 8
 #define BA_MODULUS (BA_BYTE * sizeof(int))
@@ -63,12 +64,14 @@ void ba_set(struct BitArray *ba, size_t i, bool b) {
 }
 
 void ba_set_all(struct BitArray *ba, bool b) {
-  size_t n = ceil(ba->size / BA_BYTE);
+  size_t n = ceil(ba->size / (double) BA_BYTE);
   int c = b ? 0xFF : 0x00;
   memset(ba->bits, c, n);
 }
 
 bool ba_get(struct BitArray *ba, size_t i) {
+  assert(i > 0);
+  assert(i < ba->size);
   size_t slot = ba_slot(i);
   size_t offset = ba_offset(i);
   return (ba->bits[slot] >> offset)&1;
