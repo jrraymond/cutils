@@ -99,15 +99,15 @@
     arr->size = 0; \
   } \
   \
-  void array_##name##_append(struct Array_##name *arr, elem_t x) { \
-    array_##name##_append_ref(arr, &x); \
-  } \
-  \
   void array_##name##_shrink_to_fit(struct Array_##name *arr) { \
     if (arr->size < arr->capacity) { \
       arr->capacity = arr->size; \
       arr->elems = realloc(arr->elems, arr->capacity * sizeof(elem_t)); \
     } \
+  } \
+  \
+  void array_##name##_append(struct Array_##name *arr, elem_t x) { \
+    array_##name##_append_ref(arr, &x); \
   } \
   \
   void array_##name##_append_ref(struct Array_##name *arr, elem_t *x) { \
@@ -127,6 +127,8 @@
   } \
   \
   elem_t *array_##name##_get_ref(struct Array_##name *arr, size_t i) { \
+    assert(i >= 0); \
+    assert(i < arr->size); \
     return &arr->elems[i]; \
   } \
   \
@@ -135,10 +137,13 @@
   } \
   \
   void array_##name##_set_ref(struct Array_##name *arr, size_t i, elem_t *x) { \
+    assert(i >= 0); \
+    assert(i < arr->size); \
     memcpy((void*) &arr->elems[i], (void*) x, (size_t) sizeof(elem_t)); \
   } \
   \
   void array_##name##_pop(struct Array_##name *arr) { \
+    assert(arr->size > 0); \
     --arr->size; \
   } \
   \
