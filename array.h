@@ -97,7 +97,7 @@
       size_t new_capacity = arr->capacity * CU_ARRAY_GROWTH_FACTOR; \
       array_##name##_reserve(arr, new_capacity); \
     } \
-    memcpy(arr->elems + arr->size * sizeof(elem_t), x, sizeof(elem_t)); \
+    memcpy(arr->elems[arr->size], x, sizeof(elem_t)); \
     ++arr->size; \
   } \
   \
@@ -142,7 +142,7 @@
   } \
   \
   void array_##name##_print(struct Array_##name *arr, void (*print_elem)(elem_t)) { \
-    printf("["); \
+    printf("{%zu|%zu@%p}[", arr->size, arr->capacity, arr->elems); \
     for (Array_##name##_Itr itr = array_##name##_begin(arr); \
         itr != array_##name##_end(arr); \
         array_##name##_next(arr, &itr) \
