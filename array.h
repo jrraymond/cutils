@@ -31,6 +31,12 @@
   \
   void array_##name##_reserve(struct Array_##name *arr, size_t capacity) ; \
   \
+  void array_##name##_shrink_to_fit(struct Array_##name *arr) ; \
+  \
+  static inline size_t array_##name##_size(struct Array_##name *arr) ; \
+  \
+  void array_##name##_clear(struct Array_##name *arr) ; \
+  \
   void array_##name##_append(struct Array_##name *arr, elem_t x) ; \
   \
   void array_##name##_append_ref(struct Array_##name *arr, elem_t *x) ; \
@@ -74,7 +80,7 @@
   void array_##name##_cpy(struct Array_##name *to, struct Array_##name *from) { \
     array_##name##_init(to, from->capacity); \
     to->size = from->size; \
-    memcpy(to->elems, from->elems, from->size * sizeof(elem_t)); \
+    memcpy((void*) to->elems, (void*) from->elems, (size_t) from->size * sizeof(elem_t)); \
   } \
   \
   void array_##name##_reserve(struct Array_##name *arr, size_t capacity) { \
@@ -82,11 +88,26 @@
       return; \
     elem_t *old = arr->elems; \
     arr->elems = malloc(capacity*sizeof(elem_t)); \
-    memcpy(arr->elems, old, arr->size * sizeof(elem_t)); \
+    memcpy((void*) arr->elems, (void*) old, (size_t) arr->size * sizeof(elem_t)); \
+  } \
+  \
+  static inline size_t array_##name##_size(struct Array_##name *arr) { \
+    return arr->size; \
+  } \
+  \
+  void array_##name##_clear(struct Array_##name *arr) { \
+    arr->size = 0; \
   } \
   \
   void array_##name##_append(struct Array_##name *arr, elem_t x) { \
     array_##name##_append_ref(arr, &x); \
+  } \
+  \
+  void array_##name##_shrink_to_fit(struct Array_##name *arr) { \
+    if (arr->size < arr->capacity) { \
+      arr->capacity = arr->size; \
+      arr->elems = realloc(arr->elems, arr->capacity * sizeof(elem_t)); \
+    } \
   } \
   \
   void array_##name##_append_ref(struct Array_##name *arr, elem_t *x) { \
@@ -97,7 +118,7 @@
       size_t new_capacity = arr->capacity * CU_ARRAY_GROWTH_FACTOR; \
       array_##name##_reserve(arr, new_capacity); \
     } \
-    memcpy(arr->elems[arr->size], x, sizeof(elem_t)); \
+    memcpy((void*) &arr->elems[arr->size], (void*) x, (size_t) sizeof(elem_t)); \
     ++arr->size; \
   } \
   \
@@ -106,7 +127,7 @@
   } \
   \
   elem_t *array_##name##_get_ref(struct Array_##name *arr, size_t i) { \
-    return &arr->elems[i * sizeof(elem_t)]; \
+    return &arr->elems[i]; \
   } \
   \
   void array_##name##_set(struct Array_##name *arr, size_t i, elem_t x) { \
@@ -114,15 +135,11 @@
   } \
   \
   void array_##name##_set_ref(struct Array_##name *arr, size_t i, elem_t *x) { \
-    memcpy(arr->elems + i * sizeof(elem_t), x, sizeof(elem_t)); \
+    memcpy((void*) &arr->elems[i], (void*) x, (size_t) sizeof(elem_t)); \
   } \
   \
   void array_##name##_pop(struct Array_##name *arr) { \
     --arr->size; \
-    if (arr->size / (double) arr->capacity <= CU_ARRAY_SHRINK_THRESHOLD) { \
-      arr->capacity *= CU_ARRAY_SHRINK_FACTOR; \
-      arr->elems = realloc(arr->elems, arr->capacity * sizeof(elem_t)); \
-    } \
   } \
   \
   Array_##name##_Itr array_##name##_begin(struct Array_##name *arr) { \
