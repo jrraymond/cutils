@@ -24,8 +24,8 @@ static inline int max(int a, int b) {
 
 void ba_init(struct BitArray *ba, size_t capacity) {
   ba->size = capacity;
-  size_t bytes = ceil(capacity / (double) BA_MODULUS);
-  ba->bits = calloc(bytes, sizeof(char));
+  size_t ints = ceil(capacity / (double) BA_MODULUS);
+  ba->bits = calloc(ints, sizeof(int));
 }
 
 void ba_del(struct BitArray *ba) {
@@ -34,8 +34,8 @@ void ba_del(struct BitArray *ba) {
 
 void ba_resize(struct BitArray *ba, size_t new_capacity) {
   int* old = ba->bits;
-  size_t bytes = ceil(new_capacity / (double) BA_MODULUS);
-  ba->bits = calloc(bytes, sizeof(char));
+  size_t ints = ceil(new_capacity / (double) BA_MODULUS);
+  ba->bits = calloc(ints, sizeof(int));
   size_t bound = ba->size <= new_capacity ? ba->size : new_capacity;
   for (size_t i=0; i<bound; ++i) {
     size_t slot = ba_slot(i);
@@ -64,9 +64,9 @@ void ba_set(struct BitArray *ba, size_t i, bool b) {
 }
 
 void ba_set_all(struct BitArray *ba, bool b) {
-  size_t n = ceil(ba->size / (double) BA_BYTE);
-  int c = b ? 0xFF : 0x00;
-  memset(ba->bits, c, n);
+  size_t ints = ceil(ba->size / (double) BA_MODULUS);
+  unsigned char c = b ? 0xFF : 0x0;
+  memset(ba->bits, c, ints * sizeof(int));
 }
 
 bool ba_get(struct BitArray *ba, size_t i) {
