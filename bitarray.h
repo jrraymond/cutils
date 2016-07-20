@@ -122,7 +122,7 @@ void ba_set_all(struct BitArray *ba, bool b) {
 }
 
 inline bool ba_get(struct BitArray *ba, size_t i) {
-  assert(i > 0);
+  assert(i >= 0);
   assert(i < ba->size);
   size_t slot = ba_slot(i);
   size_t offset = ba_offset(i);
