@@ -84,11 +84,13 @@
   } \
   \
   void array_##name##_reserve(struct Array_##name *arr, size_t capacity) { \
-    if (capacity < arr->capacity) \
+    if (capacity <= arr->capacity) \
       return; \
     elem_t *old = arr->elems; \
     arr->elems = malloc(capacity*sizeof(elem_t)); \
+    arr->capacity = capacity; \
     memcpy((void*) arr->elems, (void*) old, (size_t) arr->size * sizeof(elem_t)); \
+    free(old); \
   } \
   \
   static inline size_t array_##name##_size(struct Array_##name *arr) { \
@@ -112,13 +114,16 @@
   \
   void array_##name##_append_ref(struct Array_##name *arr, elem_t *x) { \
     if (arr->size >= arr->capacity) { \
-      if (!arr->capacity) { \
-        arr->capacity = 1; \
-      } \
-      size_t new_capacity = arr->capacity * CU_ARRAY_GROWTH_FACTOR; \
+      if (!arr->capacity) \
+        ++arr->capacity; \
+      size_t new_capacity = arr->capacity; \
+      if (!CU_ARRAY_GROWTH_FACTOR) \
+        new_capacity = arr->capacity + 1; \
+      else \
+        new_capacity = arr->capacity * CU_ARRAY_GROWTH_FACTOR; \
       array_##name##_reserve(arr, new_capacity); \
     } \
-    memcpy((void*) &arr->elems[arr->size], (void*) x, (size_t) sizeof(elem_t)); \
+    arr->elems[arr->size] = *x; \
     ++arr->size; \
   } \
   \
@@ -139,7 +144,7 @@
   void array_##name##_set_ref(struct Array_##name *arr, size_t i, elem_t *x) { \
     assert(i >= 0); \
     assert(i < arr->size); \
-    memcpy((void*) &arr->elems[i], (void*) x, (size_t) sizeof(elem_t)); \
+    arr->elems[i] = *x; \
   } \
   \
   void array_##name##_pop(struct Array_##name *arr) { \
