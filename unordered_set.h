@@ -42,15 +42,17 @@
 
 
 
-#define UNORDERED_SET_SPEC(name, scope, elem_t, hash_t)            \
+#define UNORDERED_SET_SIGNATURE(name, scope, elem_t, hash_t)            \
   scope void uset_##name##_init(struct USet_##name *set, size_t capacity);  \
   scope void uset_##name##_del(struct USet_##name *set); \
   scope void uset_##name##_rehash(struct USet_##name *set, size_t capacity); \
+  scope size_t uset_##name##_size(struct USet_##name *set) ; \
   scope void uset_##name##_insert(struct USet_##name *set, elem_t elem); \
   scope size_t uset_##name##_find(struct USet_##name *set, elem_t elem) ; \
   scope bool uset_##name##_contains(struct USet_##name *set, elem_t elem) ; \
   scope bool uset_##name##_remove(struct USet_##name *set, elem_t elem) ; \
   scope void _uset_##name##_debug_print(struct USet_##name *set, void (*print_hash)(hash_t), void (*print_elem)(elem_t)) ; \
+  scope elem_t uset_##name##_at(struct USet_##name *set, size_t itr) ; \
   scope size_t uset_##name##_begin(struct USet_##name *set);\
   scope size_t uset_##name##_end(struct USet_##name *set); \
   scope void uset_##name##_next(struct USet_##name *set, size_t *itr); \
@@ -59,7 +61,7 @@
 
 
 
-#define UNORDERED_SET_IMPL(name, scope, elem_t, hash_t, _hash_f, _eq_f)            \
+#define UNORDERED_SET_IMPLEMENTATION(name, scope, elem_t, hash_t, _hash_f, _eq_f)            \
                                                                            \
   scope void uset_##name##_init(struct USet_##name *set, size_t capacity) {  \
     set->capacity = capacity; \
@@ -73,6 +75,9 @@
     free(set->flags); \
     free(set->hashes); \
     free(set->elems); \
+  } \
+  scope size_t uset_##name##_size(struct USet_##name *set) { \
+    return set->size; \
   } \
  \
   scope void uset_##name##_insert(struct USet_##name *set, elem_t elem); \
@@ -223,6 +228,9 @@
     *itr = last; \
     return; \
   } \
+  scope elem_t uset_##name##_at(struct USet_##name *set, size_t itr) { \
+    return set->elems[itr]; \
+  } \
   \
   scope bool uset_##name##_eq(struct USet_##name *a, struct USet_##name *b) { \
     if (a->size != b->size) { \
@@ -244,12 +252,12 @@
 
 #define UNORDERED_SET_DECLARE(name, scope, elem_t, hash_t) \
   UNORDERED_SET_TYPE(name, elem_t, hash_t) \
-  UNORDERED_SET_SPEC(name, scope, elem_t, hash_t)
+  UNORDERED_SET_SIGNATURE(name, scope, elem_t, hash_t)
 
 
-#define UNORDERED_SET_INIT(name, scope, elem_t, hash_t, _hash_f, _eq_f) \
+#define CUTILS_UNORDERED_SET(name, scope, elem_t, hash_t, _hash_f, _eq_f) \
   UNORDERED_SET_DECLARE(name, scope, elem_t, hash_t) \
-  UNORDERED_SET_IMPL(name, scope, elem_t, hash_t, _hash_f, _eq_f) \
+  UNORDERED_SET_IMPLEMENTATION(name, scope, elem_t, hash_t, _hash_f, _eq_f)
 
 
 

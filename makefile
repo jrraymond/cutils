@@ -11,7 +11,7 @@ all: *.c *.o
 .c.o: 
 	$(CC) -c $(CFLAGS) $<
 
-$(OUTPUT): dynamic_array.o hashtable.o hash_functions.o
+$(OUTPUT): dynamic_array.o hashtable.o
 	ar ru $@ $^
 	ranlib $@
 
