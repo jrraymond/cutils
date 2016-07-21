@@ -40,6 +40,8 @@ test_dynamic_array: $(OUTPUT)
 test_hashtable: $(OUTPUT)
 	$(CC) test_hashtable.c -o test_hashtable.out $(OUTPUT) $(CFLAGS)
 
+test_array:
+	$(CC) test_array.c -o test_array.out $(CFLAGS)
 
 .PHONY: clean
 clean:

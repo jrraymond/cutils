@@ -17,54 +17,54 @@
     elem_t *elems; \
   };
 
-#define ARRAY_SIGNATURE(name, elem_t) \
+#define ARRAY_SIGNATURE(name, scope, elem_t) \
   \
   ARRAY_STRUCT(name, elem_t) \
   \
   typedef size_t Array_##name##_Itr; \
   \
-  void array_##name##_init(struct Array_##name *arr, size_t capacity) ; \
+  scope void array_##name##_init(struct Array_##name *arr, size_t capacity) ; \
   \
-  void array_##name##_del(struct Array_##name *arr) ; \
+  scope void array_##name##_del(struct Array_##name *arr) ; \
   \
-  void array_##name##_cpy(struct Array_##name *to, struct Array_##name *from) ; \
+  scope void array_##name##_cpy(struct Array_##name *to, struct Array_##name *from) ; \
   \
-  void array_##name##_reserve(struct Array_##name *arr, size_t capacity) ; \
+  scope void array_##name##_reserve(struct Array_##name *arr, size_t capacity) ; \
   \
-  void array_##name##_shrink_to_fit(struct Array_##name *arr) ; \
+  scope void array_##name##_shrink_to_fit(struct Array_##name *arr) ; \
   \
-  static inline size_t array_##name##_size(struct Array_##name *arr) ; \
+  scope size_t array_##name##_size(struct Array_##name *arr) ; \
   \
-  void array_##name##_clear(struct Array_##name *arr) ; \
+  scope void array_##name##_clear(struct Array_##name *arr) ; \
   \
-  void array_##name##_append(struct Array_##name *arr, elem_t x) ; \
+  scope void array_##name##_append(struct Array_##name *arr, elem_t x) ; \
   \
-  void array_##name##_append_ref(struct Array_##name *arr, elem_t *x) ; \
+  scope void array_##name##_append_ref(struct Array_##name *arr, elem_t *x) ; \
   \
-  elem_t array_##name##_get(struct Array_##name *arr, size_t i) ; \
+  scope elem_t array_##name##_get(struct Array_##name *arr, size_t i) ; \
   \
-  elem_t *array_##name##_get_ref(struct Array_##name *arr, size_t i) ; \
+  scope elem_t *array_##name##_get_ref(struct Array_##name *arr, size_t i) ; \
   \
-  void array_##name##_set(struct Array_##name *arr, size_t i, elem_t x) ; \
+  scope void array_##name##_set(struct Array_##name *arr, size_t i, elem_t x) ; \
   \
-  void array_##name##_set_ref(struct Array_##name *arr, size_t i, elem_t *x) ; \
+  scope void array_##name##_set_ref(struct Array_##name *arr, size_t i, elem_t *x) ; \
   \
-  void array_##name##_pop(struct Array_##name *arr) ; \
+  scope void array_##name##_pop(struct Array_##name *arr) ; \
   \
-  Array_##name##_Itr array_##name##_begin(struct Array_##name *arr) ; \
+  scope Array_##name##_Itr array_##name##_begin(struct Array_##name *arr) ; \
   \
-  Array_##name##_Itr array_##name##_end(struct Array_##name *arr) ; \
+  scope Array_##name##_Itr array_##name##_end(struct Array_##name *arr) ; \
   \
-  void array_##name##_next(struct Array_##name *arr, Array_##name##_Itr *itr) ; \
+  scope void array_##name##_next(struct Array_##name *arr, Array_##name##_Itr *itr) ; \
   \
-  void array_##name##_prev(struct Array_##name *arr, Array_##name##_Itr *itr) ; \
+  scope void array_##name##_prev(struct Array_##name *arr, Array_##name##_Itr *itr) ; \
   \
-  void array_##name##_print(struct Array_##name *arr, void (*print_elem)(elem_t)) ; \
+  scope void array_##name##_print(struct Array_##name *arr, void (*print_elem)(elem_t)) ; \
 
 
-#define ARRAY_IMPLEMENTATION(name, elem_t) \
+#define ARRAY_IMPLEMENTATION(name, scope, elem_t) \
   \
-  void array_##name##_init(struct Array_##name *arr, size_t capacity) { \
+  scope void array_##name##_init(struct Array_##name *arr, size_t capacity) { \
     arr->size = 0; \
     arr->capacity = capacity; \
     if (capacity) \
@@ -73,17 +73,17 @@
       arr->elems = NULL; \
   } \
   \
-  void array_##name##_del(struct Array_##name *arr) { \
+  scope void array_##name##_del(struct Array_##name *arr) { \
     free(arr->elems); \
   } \
   \
-  void array_##name##_cpy(struct Array_##name *to, struct Array_##name *from) { \
+  scope void array_##name##_cpy(struct Array_##name *to, struct Array_##name *from) { \
     array_##name##_init(to, from->capacity); \
     to->size = from->size; \
     memcpy((void*) to->elems, (void*) from->elems, (size_t) from->size * sizeof(elem_t)); \
   } \
   \
-  void array_##name##_reserve(struct Array_##name *arr, size_t capacity) { \
+  scope void array_##name##_reserve(struct Array_##name *arr, size_t capacity) { \
     if (capacity <= arr->capacity) \
       return; \
     elem_t *old = arr->elems; \
@@ -93,26 +93,26 @@
     free(old); \
   } \
   \
-  static inline size_t array_##name##_size(struct Array_##name *arr) { \
+  scope size_t array_##name##_size(struct Array_##name *arr) { \
     return arr->size; \
   } \
   \
-  void array_##name##_clear(struct Array_##name *arr) { \
+  scope void array_##name##_clear(struct Array_##name *arr) { \
     arr->size = 0; \
   } \
   \
-  void array_##name##_shrink_to_fit(struct Array_##name *arr) { \
+  scope void array_##name##_shrink_to_fit(struct Array_##name *arr) { \
     if (arr->size < arr->capacity) { \
       arr->capacity = arr->size; \
       arr->elems = realloc(arr->elems, arr->capacity * sizeof(elem_t)); \
     } \
   } \
   \
-  void array_##name##_append(struct Array_##name *arr, elem_t x) { \
+  scope void array_##name##_append(struct Array_##name *arr, elem_t x) { \
     array_##name##_append_ref(arr, &x); \
   } \
   \
-  void array_##name##_append_ref(struct Array_##name *arr, elem_t *x) { \
+  scope void array_##name##_append_ref(struct Array_##name *arr, elem_t *x) { \
     if (arr->size >= arr->capacity) { \
       if (!arr->capacity) \
         ++arr->capacity; \
@@ -127,48 +127,48 @@
     ++arr->size; \
   } \
   \
-  elem_t array_##name##_get(struct Array_##name *arr, size_t i) { \
+  scope elem_t array_##name##_get(struct Array_##name *arr, size_t i) { \
     return *array_##name##_get_ref(arr, i); \
   } \
   \
-  elem_t *array_##name##_get_ref(struct Array_##name *arr, size_t i) { \
+  scope elem_t *array_##name##_get_ref(struct Array_##name *arr, size_t i) { \
     assert(i >= 0); \
     assert(i < arr->size); \
     return &arr->elems[i]; \
   } \
   \
-  void array_##name##_set(struct Array_##name *arr, size_t i, elem_t x) { \
+  scope void array_##name##_set(struct Array_##name *arr, size_t i, elem_t x) { \
     array_##name##_set_ref(arr, i, &x); \
   } \
   \
-  void array_##name##_set_ref(struct Array_##name *arr, size_t i, elem_t *x) { \
+  scope void array_##name##_set_ref(struct Array_##name *arr, size_t i, elem_t *x) { \
     assert(i >= 0); \
     assert(i < arr->size); \
     arr->elems[i] = *x; \
   } \
   \
-  void array_##name##_pop(struct Array_##name *arr) { \
+  scope void array_##name##_pop(struct Array_##name *arr) { \
     assert(arr->size > 0); \
     --arr->size; \
   } \
   \
-  Array_##name##_Itr array_##name##_begin(struct Array_##name *arr) { \
+  scope Array_##name##_Itr array_##name##_begin(struct Array_##name *arr) { \
     return 0; \
   } \
   \
-  Array_##name##_Itr array_##name##_end(struct Array_##name *arr) { \
+  scope Array_##name##_Itr array_##name##_end(struct Array_##name *arr) { \
     return arr->size; \
   } \
   \
-  void array_##name##_next(struct Array_##name *arr, Array_##name##_Itr *itr) { \
+  scope void array_##name##_next(struct Array_##name *arr, Array_##name##_Itr *itr) { \
     ++(*itr); \
   } \
   \
-  void array_##name##_prev(struct Array_##name *arr, Array_##name##_Itr *itr) { \
+  scope void array_##name##_prev(struct Array_##name *arr, Array_##name##_Itr *itr) { \
     --(*itr); \
   } \
   \
-  void array_##name##_print(struct Array_##name *arr, void (*print_elem)(elem_t)) { \
+  scope void array_##name##_print(struct Array_##name *arr, void (*print_elem)(elem_t)) { \
     printf("{%zu|%zu@%p}[", arr->size, arr->capacity, arr->elems); \
     for (Array_##name##_Itr itr = array_##name##_begin(arr); \
         itr != array_##name##_end(arr); \
@@ -181,8 +181,8 @@
   }
 
 
-#define CUTILS_ARRAY(name, elem_t) \
-  ARRAY_SIGNATURE(name, elem_t) \
-  ARRAY_IMPLEMENTATION(name, elem_t)
+#define CUTILS_ARRAY(name, scope, elem_t) \
+  ARRAY_SIGNATURE(name, scope, elem_t) \
+  ARRAY_IMPLEMENTATION(name, scope, elem_t)
 
 #endif
