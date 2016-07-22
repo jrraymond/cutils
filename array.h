@@ -25,7 +25,9 @@
   \
   scope void array_##name##_init(struct Array_##name *arr, size_t capacity) ; \
   \
-  scope void array_##name##_del(struct Array_##name *arr) ; \
+  void array_##name##_init(struct Array_##name *arr, size_t capacity, elem_t el) ; \
+  \
+  void array_##name##_del(struct Array_##name *arr) ; \
   \
   scope void array_##name##_cpy(struct Array_##name *to, struct Array_##name *from) ; \
   \
@@ -71,6 +73,11 @@
       arr->elems = malloc(capacity * sizeof(elem_t)); \
     else \
       arr->elems = NULL; \
+  } \
+  void array_##name##_init(struct Array_##name *arr, size_t capacity, elem_t el) { \
+    array_##name##_init(arr, capacity); \
+    for (size_t i=0; i<capacity; ++i) \
+      arr->elems[i] = el; \
   } \
   \
   scope void array_##name##_del(struct Array_##name *arr) { \
