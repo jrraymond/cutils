@@ -25,9 +25,9 @@
   \
   scope void array_##name##_init(struct Array_##name *arr, size_t capacity) ; \
   \
-  void array_##name##_init_with(struct Array_##name *arr, size_t capacity, elem_t el) ; \
+  scope void array_##name##_init_with(struct Array_##name *arr, size_t capacity, elem_t el) ; \
   \
-  void array_##name##_del(struct Array_##name *arr) ; \
+  scope void array_##name##_del(struct Array_##name *arr) ; \
   \
   scope void array_##name##_cpy(struct Array_##name *to, struct Array_##name *from) ; \
   \
