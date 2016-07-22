@@ -25,7 +25,7 @@
   \
   scope void array_##name##_init(struct Array_##name *arr, size_t capacity) ; \
   \
-  void array_##name##_init(struct Array_##name *arr, size_t capacity, elem_t el) ; \
+  void array_##name##_init_with(struct Array_##name *arr, size_t capacity, elem_t el) ; \
   \
   void array_##name##_del(struct Array_##name *arr) ; \
   \
@@ -74,7 +74,7 @@
     else \
       arr->elems = NULL; \
   } \
-  void array_##name##_init(struct Array_##name *arr, size_t capacity, elem_t el) { \
+  void array_##name##_init_with(struct Array_##name *arr, size_t capacity, elem_t el) { \
     array_##name##_init(arr, capacity); \
     for (size_t i=0; i<capacity; ++i) \
       arr->elems[i] = el; \
