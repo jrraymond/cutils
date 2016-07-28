@@ -36,7 +36,7 @@ void ba_resize(struct BitArray *ba, size_t new_capacity);
 
 /** Set bit at index i to b. No bounds checking.
  */
-inline void ba_set(struct BitArray *ba, size_t i, bool b) ;
+static inline void ba_set(struct BitArray *ba, size_t i, bool b) ;
 
 /** Set all bits to true or false
  */
@@ -45,11 +45,11 @@ void ba_set_all(struct BitArray *ba, bool b) ;
 /** Set a bit, growing the capacity of the bitarray if the index is out of
  * bounds by growth_factor.
  */
-inline void ba_set_grow(struct BitArray *ba, size_t i, bool b, double growth_factor) ;
+static inline void ba_set_grow(struct BitArray *ba, size_t i, bool b, double growth_factor) ;
 
 /** Get the value of bit at index i. No bounds checking.
  */
-inline bool ba_get(struct BitArray *ba, size_t i) ;
+static inline bool ba_get(struct BitArray *ba, size_t i) ;
 
 /** Retrieve the number of bits held in bit array.
  */
@@ -61,15 +61,15 @@ inline size_t ba_size(struct BitArray *ba) ;
  */
 void ba_print(struct BitArray *ba) ;
 
-inline int ba_slot(size_t i) {
+static inline int ba_slot(size_t i) {
   return i / BA_MODULUS;
 }
 
-inline int ba_offset(size_t i) {
+static inline int ba_offset(size_t i) {
   return i % BA_MODULUS;
 }
 
-inline int max(int a, int b) {
+static inline int max(int a, int b) {
   return a >= b ? a : b;
 }
 
@@ -100,7 +100,7 @@ void ba_resize(struct BitArray *ba, size_t new_capacity) {
   free(old);
 }
 
-inline void ba_set_grow(struct BitArray *ba, size_t i, bool b, double growth_factor) {
+static inline void ba_set_grow(struct BitArray *ba, size_t i, bool b, double growth_factor) {
   if (i >= ba->size) {
     ba_resize(ba, max(i+1, ceil(growth_factor * ba->size)));
   }
@@ -108,7 +108,7 @@ inline void ba_set_grow(struct BitArray *ba, size_t i, bool b, double growth_fac
 }
 
 
-inline void ba_set(struct BitArray *ba, size_t i, bool b) {
+static inline void ba_set(struct BitArray *ba, size_t i, bool b) {
   size_t slot = ba_slot(i);
   size_t offset = ba_offset(i);
   ba->bits[slot] &= ~(1U << offset);
@@ -121,7 +121,7 @@ void ba_set_all(struct BitArray *ba, bool b) {
   memset(ba->bits, c, ints * sizeof(int));
 }
 
-inline bool ba_get(struct BitArray *ba, size_t i) {
+static inline bool ba_get(struct BitArray *ba, size_t i) {
   assert(i >= 0);
   assert(i < ba->size);
   size_t slot = ba_slot(i);
