@@ -2,6 +2,7 @@
 #define __CUTILS_ARRAY_H
 
 #include <strings.h>
+#include <assert.h>
 
 /* Dynamically resizing arrays that know their size. This is a macro version of
  * the void** dynamic_array library.
@@ -139,7 +140,6 @@
   } \
   \
   scope elem_t *array_##name##_get_ref(struct Array_##name *arr, size_t i) { \
-    assert(i >= 0); \
     assert(i < arr->size); \
     return &arr->elems[i]; \
   } \
@@ -149,7 +149,6 @@
   } \
   \
   scope void array_##name##_set_ref(struct Array_##name *arr, size_t i, elem_t *x) { \
-    assert(i >= 0); \
     assert(i < arr->size); \
     arr->elems[i] = *x; \
   } \
