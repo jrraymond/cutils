@@ -1,7 +1,7 @@
 #ifndef __CUTILS_ARRAY_H
 #define __CUTILS_ARRAY_H
 
-#include <strings.h>
+#include <string.h>
 #include <assert.h>
 
 /* Dynamically resizing arrays that know their size. This is a macro version of
