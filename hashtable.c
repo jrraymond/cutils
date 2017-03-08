@@ -1,10 +1,10 @@
 #include "hashtable.h"
 
-/* A bucket can be in one of three states: empty, dummy, active.
- *  empty: no value in the bucket
- *  dummy: no value in bucket but should continue probing
- *  active: value in the bucket
- */
+// A bucket can be in one of three states: empty, dummy, active.
+//  empty: no value in the bucket
+//  dummy: no value in bucket but should continue probing
+//  active: value in the bucket
+//
 
 int ht_status(int *flags, int i) {
   return (flags[2*i/sizeof(int)]>>(2*i%sizeof(int)))&0x3;
@@ -139,7 +139,7 @@ void ht_iters(struct Hashtable *htable, void* *begin, void* *end) {
   exit(0);
 }
 
-/* COMMON HASH FUNCTIONS */
+// COMMON HASH FUNCTIONS
 unsigned int ptr64(void* s) {
   exit(1);
 }
@@ -147,7 +147,7 @@ unsigned int ptr32(void* s) {
   exit(1);
 }
 
-/* djb2 by Dan Bernstein */
+// djb2 by Dan Bernstein
 unsigned int str_hash(void** s_ptr) {
   char* s = *(char**) s_ptr;
   unsigned long hash = 5381;

@@ -8,16 +8,16 @@
 #include "debug.h"
 
 
-/* hashtable consists of 
- * hash_fn : the hash function
- * capacity : number of elements that can fit in the hashtable
- * size : the number of elements in the hashtable
- * key_sz : size of keys in bytes
- * value_sz : size of values in bytes
- * flags : bit array of flags indicating state of each bucket
- * keys : array for keys
- * values : array for values
- */
+// hashtable consists of 
+// hash_fn : the hash function
+// capacity : number of elements that can fit in the hashtable
+// size : the number of elements in the hashtable
+// key_sz : size of keys in bytes
+// value_sz : size of values in bytes
+// flags : bit array of flags indicating state of each bucket
+// keys : array for keys
+// values : array for values
+//
 struct Hashtable {
   unsigned int (*hash_fn)(void*);
   bool (*cmp)(void*, void*);
@@ -30,8 +30,8 @@ struct Hashtable {
   void *values;
 };
 
-/* Initializes an uninitialized hashtable
- */
+// Initializes an uninitialized hashtable
+//
 void ht_init(
   struct Hashtable *htable,       //ptr to hashtable
   unsigned int (*hash_fn)(void*), //hash function
@@ -41,38 +41,38 @@ void ht_init(
   int capacity                    //initial capacity
   );
 
-/* Free memory held be hashtable
- * does NOT free memory held by the keys or values in the hashtable
- */
+// Free memory held be hashtable
+// does NOT free memory held by the keys or values in the hashtable
+//
 void ht_del(struct Hashtable *htable);
 
-/*  Looks up a key in a hashtable
- *  htable : ptr to the hashtable
- *  key : ptr to the key
- *  value : ptr to ptr to value
- *
- * If key is found *value is set to reference the value
- */
+//  Looks up a key in a hashtable
+//  htable : ptr to the hashtable
+//  key : ptr to the key
+//  value : ptr to ptr to value
+//
+// If key is found *value is set to reference the value
+//
 bool ht_get_ref(struct Hashtable *htable, void *key, void **value);
 
-/*
- */
+//
+//
 void ht_insert(struct Hashtable *htable, void *key, void *value);
 
-/*
- */
+//
+//
 void ht_rm(struct Hashtable *htable, void *key);
 
-/*
- */
+//
+//
 void ht_set(struct Hashtable *htable, void *key, void *value);
 
-/*
- */
+//
+//
 void ht_iters(struct Hashtable *htable, void* *begin, void* *end);
 
-/*
- */
+//
+//
 void ht_rehash(struct Hashtable *ht, int sz);
 
 static const int ht_empty = 0;

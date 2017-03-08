@@ -5,12 +5,12 @@
 #include <stdio.h>
 #include <string.h>
 
-/* Dynamically resizing arrays
- *  size : size_t, the number of elements in the array
- *  capacity : size_t, the number elements that can fit
- *  elem_size : size_t, the size of each element
- *  elems : void*, ptr to array containing elems
- */
+// Dynamically resizing arrays
+//  size : size_t, the number of elements in the array
+//  capacity : size_t, the number elements that can fit
+//  elem_size : size_t, the size of each element
+//  elems : void*, ptr to array containing elems
+//
 struct DynArray {
   size_t size;
   size_t capacity;
@@ -18,61 +18,61 @@ struct DynArray {
   void *elems;
 };
 
-/* arr : ptr to uninitialized dynamic array struct
- * capacity : initial capacity (if 0 then no allocation)
- * elem_sz : size of element to be held in array in bytes
- */
+// arr : ptr to uninitialized dynamic array struct
+// capacity : initial capacity (if 0 then no allocation)
+// elem_sz : size of element to be held in array in bytes
+//
 void da_DynArray_init(struct DynArray *arr, size_t capacity, size_t elem_sz);
 
-/* arr : ptr to initialized dynamic array struct
- * frees memory held by arr
- * does not free memory held by elements
- */
+// arr : ptr to initialized dynamic array struct
+// frees memory held by arr
+// does not free memory held by elements
+//
 void da_DynArray_del(struct DynArray *arr);
 
-/* to: uninitialized dynamic array to copy into
- * from : dynamic array to copy from
- * this is a SHALLOW copy
- */
+// to: uninitialized dynamic array to copy into
+// from : dynamic array to copy from
+// this is a SHALLOW copy
+//
 void da_DynArray_copy(struct DynArray *to, struct DynArray *from);
 
-/* arr : ptr to dynamic array struct
- * elem : ptr to elem to append
- * _copys_ elem to the end of the array
- * may resize dynamic array if size == capacity
- */
+// arr : ptr to dynamic array struct
+// elem : ptr to elem to append
+// _copys_ elem to the end of the array
+// may resize dynamic array if size == capacity
+//
 void da_append(struct DynArray *arr, void *elem);
 
-/* arr : ptr to dynamic array struct
- * removes element from end of array
- * may call realloc if size/capacity <= shrink threshold
- */
+// arr : ptr to dynamic array struct
+// removes element from end of array
+// may call realloc if size/capacity <= shrink threshold
+//
 void da_pop(struct DynArray *arr);
 
-/* arr : ptr to dynamic array struct
- * index : index of element to get
- * elem* : ptr of where to copy element into
- * _copys_ element at index into elem
- */
+// arr : ptr to dynamic array struct
+// index : index of element to get
+// elem* : ptr of where to copy element into
+// _copys_ element at index into elem
+//
 void da_get(struct DynArray *arr, int index, void *elem);
 
-/* arr : ptr to dynamic array struct
- * index : index of element to get
- * elem** : ptr to ptr to element
- * sets elem* to point to the element at index in arr
- */
+// arr : ptr to dynamic array struct
+// index : index of element to get
+// elem** : ptr to ptr to element
+// sets elem* to point to the element at index in arr
+//
 void da_get_ref(struct DynArray *arr, int index, void **elem);
 
-/* arr : ptr to dynamic array struct
- * index : index of element to set
- * elem* : ptr to element to _copy_ from
- */
+// arr : ptr to dynamic array struct
+// index : index of element to set
+// elem* : ptr to element to _copy_ from
+//
 void da_set(struct DynArray *arr, int index, void *elem);
 
-/* map a function over an array
- * arr : dynamic array to map over
- * fn : function pointer to function that takes void* to element
- */
+// map a function over an array
+// arr : dynamic array to map over
+// fn : function pointer to function that takes void* to element
+//
 void da_map(struct DynArray *arr, void (*fn)(void*));
 
 #endif

@@ -5,16 +5,16 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-/*
- * use linear probing j = 5*j + 1 + perturb as guaranteed to hit every slot
- * before repeating.
- */
+//
+// use linear probing j = 5*j + 1 + perturb as guaranteed to hit every slot
+// before repeating.
+//
 #define CU_US_LOAD_FACTOR (2.0/3.0)
 
-/* macros for checking flags. we need to keep track of 3 states: empty,
- * occupied, deleted. This requires 2 bits. 00 -> empty, 01->occupied,
- * 10->deleted. A flag is 8 bits so it holds 4 subflags.
- */
+// macros for checking flags. we need to keep track of 3 states: empty,
+// occupied, deleted. This requires 2 bits. 00 -> empty, 01->occupied,
+// 10->deleted. A flag is 8 bits so it holds 4 subflags.
+//
 #define US_FLAG_EMP 0
 #define US_FLAG_OCC 1
 #define US_FLAG_DEL 2

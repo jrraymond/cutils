@@ -4,9 +4,9 @@
 #include <string.h>
 #include <assert.h>
 
-/* Dynamically resizing arrays that know their size. This is a macro version of
- * the void** dynamic_array library.
- */
+// Dynamically resizing arrays that know their size. This is a macro version of
+// the void** dynamic_array library.
+//
 #define CU_ARRAY_GROWTH_FACTOR 2
 #define CU_ARRAY_SHRINK_THRESHOLD 0.3
 #define CU_ARRAY_SHRINK_FACTOR 0.75

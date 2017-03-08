@@ -1,20 +1,20 @@
 #ifndef __CUTILS_MATRIX_H
 #define __CUTILS_MATRIX_H
 
-/** A two dimensional matrix parametrized over its name and element type.
- *
- * The macro MATRIX_TYPE(name, elem_t) generates the struct definition and
- * function declarations. name determines the name of the structure and
- * function names. For example if name is "u8" then the struct will be named
- * struct Matrix_u8 and all functions will be prefixed with matrix_u8_.
- * elem_t is the type of elements of the matrix.
- *
- * The macro MATRIX_IMPL(name, elem_t) generates the function implementations.
- * It must be called with the same name and elem_t as MATRIX_TYPE.
- *
- * The macro MATRIX_INIT(name, elem_t) calls the macros MATRIX_TYPE and
- * MATRIX_IMPL together.
- * */
+// A two dimensional matrix parametrized over its name and element type.
+//
+// The macro MATRIX_TYPE(name, elem_t) generates the struct definition and
+// function declarations. name determines the name of the structure and
+// function names. For example if name is "u8" then the struct will be named
+// struct Matrix_u8 and all functions will be prefixed with matrix_u8_.
+// elem_t is the type of elements of the matrix.
+//
+// The macro MATRIX_IMPL(name, elem_t) generates the function implementations.
+// It must be called with the same name and elem_t as MATRIX_TYPE.
+//
+// The macro MATRIX_INIT(name, elem_t) calls the macros MATRIX_TYPE and
+// MATRIX_IMPL together.
+//
 
 #define MATRIX_TYPE(name, elem_t) \
   \

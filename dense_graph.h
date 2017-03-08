@@ -7,20 +7,20 @@
 
 #include <stdint.h>
 
-/* A dense graph is represented by an adjacency matrix
- *   a graph is dense if it has O(n^2) edges
- *
- * node_data holds the associated node data
- * edge_data holds the associated edge data
- * index_t is a bound on the number of indices the graph will need
- *
- * the graph will grow but will never shrink
- *
- * still not clear how best way to deal with deleted nodes/edges is, should the
- * user be responsible for not asking for data for the nodes they delete?
- *
- * so for now everything has undefined behavior if you delete any nodes
- */
+// A dense graph is represented by an adjacency matrix
+//   a graph is dense if it has O(n^2) edges
+//
+// node_data holds the associated node data
+// edge_data holds the associated edge data
+// index_t is a bound on the number of indices the graph will need
+//
+// the graph will grow but will never shrink
+//
+// still not clear how best way to deal with deleted nodes/edges is, should the
+// user be responsible for not asking for data for the nodes they delete?
+//
+// so for now everything has undefined behavior if you delete any nodes
+//
 #define DG_GROWTH_FACTOR 2
 #define DG_MASK_GROWTH_FACTOR 1
 
